@@ -3,22 +3,32 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-    <title>IMPHNEN - Gacha Kasta Simulator</title>
-    <meta name="description" content="Simulator gacha nasib warga IMPHNEN (Unofficial)" />
     
-    <!-- Google Fonts -->
+    <title>IMPHNEN - Gacha Kasta Simulator</title>
+    <meta name="title" content="IMPHNEN - Gacha Kasta Simulator" />
+    <meta name="description" content="Adu hoki lu di Simulator Gacha Nasib Warga IMPHNEN (Unofficial). Koleksi kartu kasta tertinggi!" />
+    <meta name="author" content="Dahono Consulting" />
+
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://gacha-imphnen.vercel.app/" /> <meta property="og:title" content="IMPHNEN - Gacha Kasta Simulator" />
+    <meta property="og:description" content="Gue dapet kasta apa ya hari ini? Cek hoki lu sekarang!" />
+    <meta property="og:image" content="https://imphnen.dev/logo.webp" />
+
+    <meta property="twitter:card" content="summary_large_image" />
+    <meta property="twitter:title" content="IMPHNEN - Gacha Kasta Simulator" />
+    <meta property="twitter:description" content="Adu hoki lu di Simulator Gacha Nasib Warga IMPHNEN (Unofficial)." />
+    <meta property="twitter:image" content="https://imphnen.dev/logo.webp" />
+
+    <link rel="icon" type="image/png" href="https://ktik.me/favicon.svg" />
+    
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="" />
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;700;800;900&display=swap" rel="stylesheet" />
     
-    <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Lucide Icons -->
     <script src="https://unpkg.com/lucide@latest"></script>
-    <!-- Canvas Confetti -->
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
 
-    <!-- Tailwind Config -->
     <script>
       tailwind.config = {
         theme: {
@@ -28,12 +38,11 @@
               primary: { DEFAULT: '#3b82f6', 500: '#3b82f6', 600: '#2563eb' }
             },
             animation: {
-                float: 'float 6s ease-in-out infinite',
-                'float-delayed': 'float 6s ease-in-out 3s infinite',
-                'pulse-slow': 'pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+                'float': 'float 6s ease-in-out infinite',
+                'pulse-slow': 'pulse 4s cubic-bezier(0.4, 0, 0.6, 1) infinite',
             },
             keyframes: {
-                float: { '0%, 100%': { transform: 'translateY(0) rotate(0deg)' }, '50%': { transform: 'translateY(-15px) rotate(5deg)' } },
+                float: { '0%, 100%': { transform: 'translateY(0)' }, '50%': { transform: 'translateY(-10px)' } },
             }
           }
         }
@@ -41,746 +50,278 @@
     </script>
 
     <style>
-        body { overflow-x: hidden; }
-
-        /* Seamless Marquee */
-        .marquee-content {
-            display: flex;
-            width: max-content;
-            animation: scrolling 25s linear infinite;
-        }
-        @keyframes scrolling {
-            0% { transform: translateX(0); }
-            100% { transform: translateX(-50%); }
-        }
-
-        /* 3D Flip Card Mechanics */
-        .card-wrapper { 
-            perspective: 1500px; 
-            aspect-ratio: 63 / 88;
-            width: 100%;
-        }
-        .card-inner {
-            position: relative;
-            width: 100%;
-            height: 100%;
-            transition: transform 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            transform-style: preserve-3d;
-            cursor: pointer;
-        }
-        .card-inner.is-flipped {
-            transform: rotateY(180deg);
-        }
-        .card-front, .card-back {
-            position: absolute;
-            width: 100%;
-            height: 100%;
-            backface-visibility: hidden;
-            -webkit-backface-visibility: hidden;
-            border-radius: 1.5rem;
-            box-shadow: 0 25px 50px -12px rgba(0,0,0,0.5);
-        }
-        .card-back {
-            transform: rotateY(180deg);
-            background: linear-gradient(135deg, #0f172a, #1e293b);
-            border: 8px solid #334155;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-        }
-        @media (min-width: 640px) {
-            .card-back { border-width: 10px; }
-        }
-        
-        /* Holo Foil Overlay */
-        .holo-foil {
-            position: absolute; inset: 0; z-index: 40; pointer-events: none; opacity: 0;
-            background: linear-gradient(115deg, transparent 20%, rgba(255, 255, 255, 0.8) 40%, rgba(255, 255, 255, 0.2) 45%, transparent 60%);
-            background-size: 200% 200%; background-position: -100% 0; mix-blend-mode: color-dodge;
-        }
-
+        body { overflow-x: hidden; background-color: #f8fafc; }
+        .card-wrapper { perspective: 2000px; aspect-ratio: 63 / 88; width: 100%; transition: transform 0.5s cubic-bezier(0.2, 0.8, 0.2, 1); }
+        .card-inner { position: relative; width: 100%; height: 100%; transition: transform 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275); transform-style: preserve-3d; cursor: pointer; }
+        .card-inner.is-flipped { transform: rotateY(180deg); }
+        .card-front, .card-back { position: absolute; width: 100%; height: 100%; backface-visibility: hidden; -webkit-backface-visibility: hidden; border-radius: 1.5rem; box-shadow: 0 25px 50px -12px rgba(0,0,0,0.5); }
+        .card-back { transform: rotateY(180deg); background: linear-gradient(135deg, #0f172a, #1e293b); border: 10px solid #334155; display: flex; flex-direction: column; align-items: center; justify-content: center; }
+        .holo-foil { position: absolute; inset: 0; z-index: 40; pointer-events: none; opacity: 0; background: linear-gradient(115deg, transparent 20%, rgba(255, 255, 255, 0.8) 40%, rgba(255, 255, 255, 0.2) 45%, transparent 60%); background-size: 200% 200%; mix-blend-mode: color-dodge; border-radius: 1.2rem; }
         .shine-effect .holo-foil { animation: shimmer 2.5s ease-in-out infinite; opacity: 1; }
         @keyframes shimmer { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }
-
-        /* Gacha Rolling Shake */
-        @keyframes pullShake {
-            0%, 100% { transform: translate(0,0) rotate(0deg) scale(0.95); }
-            25% { transform: translate(-3px, 3px) rotate(-1deg) scale(0.95); }
-            50% { transform: translate(3px, -3px) rotate(1deg) scale(0.95); }
-            75% { transform: translate(-3px, -3px) rotate(-1deg) scale(0.95); }
-        }
-        .anim-rolling .card-inner { animation: pullShake 0.1s infinite; filter: blur(3px) brightness(0.8); }
-
-        /* TCG Rarity Theme Colors */
-        .bg-ur { background: linear-gradient(135deg, #FFDF00, #D4AF37, #B8860B); }
-        .bg-sr { background: linear-gradient(135deg, #FF00FF, #8A2BE2, #4B0082); }
-        .bg-r { background: linear-gradient(135deg, #00FFFF, #1E90FF, #00008B); }
-        .bg-c { background: linear-gradient(135deg, #E2E8F0, #94A3B8, #475569); }
-        .bg-mythic { background: linear-gradient(135deg, #ff0000, #800000, #000000); }
-        .bg-empty { background: linear-gradient(135deg, #1e293b, #0f172a); }
-
+        @keyframes pullShake { 0%, 100% { transform: translate(0,0) rotate(0deg); } 25% { transform: translate(-2px, 2px) rotate(-0.5deg); } 50% { transform: translate(2px, -2px) rotate(0.5deg); } }
+        .anim-rolling .card-inner { animation: pullShake 0.15s infinite; filter: blur(1px); }
+        .bg-ur { background: linear-gradient(135deg, #FFDF00, #B8860B); }
+        .bg-sr { background: linear-gradient(135deg, #FF00FF, #4B0082); }
+        .bg-r { background: linear-gradient(135deg, #00FFFF, #00008B); }
+        .bg-c { background: linear-gradient(135deg, #cbd5e1, #475569); }
+        .bg-mythic { background: linear-gradient(135deg, #ff0000, #000000); }
         .border-ur { border-color: #FFEA00; }
         .border-sr { border-color: #DDA0DD; }
         .border-r { border-color: #87CEFA; }
-        .border-c { border-color: #F8FAFC; }
+        .border-c { border-color: #f1f5f9; }
         .border-mythic { border-color: #ff0000; }
-
-        @keyframes popUp {
-            0% { opacity: 0; transform: translateY(20px) scale(0.9); }
-            100% { opacity: 1; transform: translateY(0) scale(1); }
-        }
-        .anim-pop-up { animation: popUp 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards; }
-
-        .bg-grid-pattern {
-            background-size: 30px 30px;
-            background-image: linear-gradient(to right, rgba(59, 130, 246, 0.08) 1px, transparent 1px),
-                              linear-gradient(to bottom, rgba(59, 130, 246, 0.08) 1px, transparent 1px);
-        }
+        .bg-grid-pattern { background-size: 30px 30px; background-image: linear-gradient(to right, rgba(59, 130, 246, 0.05) 1px, transparent 1px), linear-gradient(to bottom, rgba(59, 130, 246, 0.05) 1px, transparent 1px); }
     </style>
 </head>
-<body class="font-sans antialiased text-slate-800 bg-slate-50 min-h-screen flex flex-col relative">
+<body class="font-sans antialiased text-slate-800">
 
-    <!-- Header -->
-    <header class="w-full z-40 bg-white/90 backdrop-blur-md border-b border-slate-200 sticky top-0 shadow-sm">
+    <header class="w-full z-50 bg-white/80 backdrop-blur-md border-b border-slate-200 sticky top-0">
         <div class="container mx-auto px-4 flex h-16 items-center justify-between max-w-6xl">
-            <a href="/" class="flex items-center gap-2">
-                <img src="https://imphnen.dev/logo.webp" alt="IMPHNEN Logo" class="h-8 w-auto object-contain" 
-                     onerror="this.onerror=null; this.outerHTML='<div class=\'font-black text-2xl tracking-tighter\'><span class=\'text-primary\'>&lt;</span><span class=\'bg-clip-text text-transparent bg-gradient-to-r from-primary to-purple-600\'>IMPHNEN</span><span class=\'text-primary\'>/&gt;</span></div>';"/>
+            <a href="/" class="font-black text-xl tracking-tighter">
+                <span class="text-primary">&lt;</span><span class="bg-clip-text text-transparent bg-gradient-to-r from-primary to-purple-600">IMPHNEN</span><span class="text-primary">/&gt;</span>
             </a>
-            <div class="flex items-center gap-1.5 text-[10px] md:text-xs font-bold text-slate-500 bg-slate-100 px-3 py-1.5 rounded-full border border-slate-200">
-                <i data-lucide="info" class="w-3.5 h-3.5"></i> FAN-MADE
+            <div class="flex items-center gap-1.5 text-[10px] font-bold text-slate-500 bg-slate-100 px-3 py-1.5 rounded-full border border-slate-200">
+                <i data-lucide="shield-check" class="w-3.5 h-3.5 text-primary"></i> VERIFIED GACHA
             </div>
         </div>
     </header>
 
-    <main class="flex-1 flex flex-col relative overflow-hidden">
+    <main class="relative min-h-screen">
+        <div class="absolute inset-0 -z-10 bg-grid-pattern"></div>
         
-        <!-- SECTION GACHA -->
-        <section class="flex-1 flex items-center justify-center relative py-6 md:py-12 w-full">
-            
-            <div class="absolute inset-0 -z-10 bg-grid-pattern"></div>
-            <div class="absolute top-1/4 -left-20 w-64 md:w-96 h-64 md:h-96 rounded-full bg-blue-400/20 blur-3xl opacity-60 pointer-events-none"></div>
-            <div class="absolute bottom-1/4 -right-20 w-64 md:w-96 h-64 md:h-96 rounded-full bg-purple-400/20 blur-3xl opacity-60 pointer-events-none"></div>
-
-            <div class="container mx-auto px-4 max-w-6xl relative z-10">
-                <div class="flex flex-col lg:flex-row gap-6 lg:gap-12 items-center lg:items-start justify-between">
-                    
-                    <!-- KIRI: Info & Form Gacha -->
-                    <div class="w-full lg:w-1/2 flex flex-col justify-center space-y-5 pt-2 lg:pt-10">
-                        <div class="text-center lg:text-left space-y-3" id="mainTextContainer">
-                            <span class="inline-flex items-center rounded-full border border-primary/30 bg-primary/10 text-primary px-3 py-1 text-[10px] sm:text-xs font-bold uppercase tracking-wider shadow-sm">
-                                <span class="relative flex h-2 w-2 mr-2">
-                                  <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-primary opacity-75"></span>
-                                  <span class="relative inline-flex rounded-full h-2 w-2 bg-primary"></span>
-                                </span>
-                                TCG Gacha Online
-                            </span>
-                            <h1 id="mainTitle" class="text-3xl md:text-5xl lg:text-6xl font-black tracking-tight text-slate-900 leading-[1.1]">
-                                Gacha Kasta <br/>
-                                <span class="bg-clip-text text-transparent bg-gradient-to-r from-primary via-blue-600 to-purple-600">
-                                    Warga IMPHNEN
-                                </span>
-                            </h1>
-                            <p id="mainDesc" class="text-slate-600 text-sm md:text-lg leading-relaxed max-w-lg mx-auto lg:mx-0">
-                                Adu hoki lu di sini! Gacha sekarang, koleksi kartunya, dan buktikan kasta lu di hadapan para beban server.
-                            </p>
+        <section class="container mx-auto px-4 py-8 lg:py-16 max-w-6xl">
+            <div class="grid lg:grid-cols-2 gap-12 items-start">
+                
+                <div class="space-y-8 order-2 lg:order-1">
+                    <div class="space-y-4">
+                        <div id="statusBadge" class="inline-flex items-center rounded-full bg-blue-50 text-primary border border-blue-100 px-4 py-1.5 text-xs font-bold uppercase tracking-widest animate-float">
+                            TCG Gacha Online
                         </div>
+                        <h1 id="mainTitle" class="text-4xl md:text-6xl font-black tracking-tight text-slate-900 leading-tight">
+                            Gacha Kasta <br/> <span class="text-primary">Warga IMPHNEN</span>
+                        </h1>
+                    </div>
 
-                        <!-- Form -->
-                        <div id="formCard" class="bg-white/90 backdrop-blur-xl p-5 md:p-8 rounded-3xl shadow-2xl border border-white relative z-10 w-full max-w-lg mx-auto lg:mx-0">
-                            <div class="mb-5">
-                                <label for="playerName" class="block text-sm font-bold text-slate-700 mb-2 uppercase tracking-wide flex items-center gap-2">
-                                    <i data-lucide="scan-line" class="w-4 h-4 text-primary"></i> Masukkan Nama Lu:
-                                </label>
-                                <input type="text" id="playerName" class="w-full bg-slate-50 border-2 border-slate-200 rounded-xl py-3 px-4 text-slate-900 font-bold focus:outline-none focus:border-primary focus:ring-4 focus:ring-primary/20 transition-all placeholder-slate-400 text-base md:text-lg shadow-inner" placeholder="Contoh: xX_Turu_Xx" autocomplete="off" onkeypress="if(event.key === 'Enter') prepareGacha()">
+                    <div id="formCard" class="bg-white p-6 md:p-8 rounded-[2rem] shadow-2xl border border-slate-100">
+                        <div class="mb-6">
+                            <label class="block text-[10px] font-black text-slate-400 mb-2 uppercase tracking-[0.2em]">Nickname Player</label>
+                            <input type="text" id="playerName" 
+                                class="w-full bg-slate-50 border-2 border-slate-100 rounded-2xl py-4 px-5 text-slate-900 font-bold focus:outline-none focus:border-primary transition-all text-lg" 
+                                placeholder="Siapa nama lu?" 
+                                onkeypress="if(event.key === 'Enter') prepareGacha()">
+                        </div>
+                        
+                        <button id="gachaBtn" onclick="prepareGacha()" class="w-full bg-gradient-to-r from-primary to-indigo-600 text-white font-black text-lg py-4 rounded-2xl transition-all shadow-xl shadow-blue-500/25 hover:scale-[1.02] active:scale-[0.98]">
+                            PULL KARTU SEKARANG
+                        </button>
+
+                        <div class="mt-8 grid grid-cols-2 gap-4">
+                            <div class="bg-slate-50 rounded-2xl p-4 text-center">
+                                <p class="text-[10px] text-slate-400 font-bold uppercase mb-1">Total Pull</p>
+                                <p id="pullCountDisplay" class="text-2xl font-black text-slate-800">0</p>
                             </div>
-                            
-                            <button id="gachaBtn" onclick="prepareGacha()" class="w-full bg-gradient-to-r from-primary to-purple-600 hover:from-blue-600 hover:to-indigo-700 text-white font-black text-base md:text-lg py-4 px-4 rounded-xl transition-all duration-300 flex justify-center items-center gap-2 shadow-[0_10px_20px_rgba(59,130,246,0.3)] hover:-translate-y-1 active:translate-y-0 active:scale-95 group">
-                                <span id="btnIconWrapper"><i data-lucide="scan-line" class="w-6 h-6 group-hover:rotate-12 transition-transform"></i></span>
-                                <span id="btnText">PULL KARTU SEKARANG</span>
-                            </button>
+                            <div class="bg-blue-50 rounded-2xl p-4 text-center">
+                                <p class="text-[10px] text-primary font-bold uppercase mb-1">Pity SR</p>
+                                <p id="pityDisplay" class="text-2xl font-black text-primary">0/10</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
 
-                            <div id="statsGroup" class="mt-6 grid grid-cols-2 gap-4">
-                                <div class="bg-slate-100/50 rounded-xl p-3 text-center border border-slate-200 shadow-inner">
-                                    <p class="text-[10px] text-slate-500 font-bold uppercase tracking-wider">Total Pull</p>
-                                    <p id="pullCountDisplay" class="text-xl font-black text-slate-800">0</p>
-                                </div>
-                                <div class="bg-blue-50/50 rounded-xl p-3 text-center border border-blue-100 shadow-inner">
-                                    <p class="text-[10px] text-primary font-bold uppercase tracking-wider">Pity (Garansi SR)</p>
-                                    <p id="pityDisplay" class="text-xl font-black text-primary">0/10</p>
+                <div class="order-1 lg:order-2 flex flex-col items-center">
+                    <div id="cardWrapperMain" class="card-wrapper max-w-[320px] md:max-w-[380px]" onclick="flipCard()">
+                        <div id="cardInner" class="card-inner">
+                            <div id="cardFront" class="card-front bg-slate-800 border-[10px] border-slate-700 overflow-hidden flex flex-col p-3">
+                                <div class="holo-foil"></div>
+                                <div class="h-full w-full bg-slate-900 rounded-2xl flex flex-col relative z-20 overflow-hidden">
+                                    <div class="h-12 w-full flex items-center justify-between px-4 absolute top-0 z-30 bg-gradient-to-b from-black/50 to-transparent">
+                                        <img src="https://imphnen.dev/logo.webp" class="h-4" onerror="this.style.display='none'">
+                                        <div class="text-right">
+                                            <p class="text-[10px] font-black text-white" id="cardKemalasan">???</p>
+                                        </div>
+                                    </div>
+                                    <div class="w-full h-1/2 relative bg-slate-800 mt-10 overflow-hidden">
+                                        <img id="cardImage" src="" class="absolute inset-0 w-full h-full object-cover opacity-0 transition-opacity duration-500 z-20" />
+                                    </div>
+                                    <div class="flex-1 p-4 bg-slate-900 flex flex-col">
+                                        <h4 id="cardNameBadge" class="text-xl font-black text-white uppercase truncate mb-1">...</h4>
+                                        <p id="cardTitle" class="text-[10px] font-bold text-primary uppercase mb-3">MENUNGGU TAKDIR</p>
+                                        <p id="cardDesc" class="text-[10px] text-slate-400 leading-relaxed italic">"Tulis nama dulu terus pencet tombol pull di sebelah kiri."</p>
+                                    </div>
+                                    <div class="h-8 bg-black flex items-center px-4 text-[8px] font-mono text-slate-600" id="randomId">VER: 2026-IMPH</div>
                                 </div>
                             </div>
-
-                            <!-- Drop Rates -->
-                            <div id="ratesGroup" class="mt-5 bg-slate-100 rounded-xl p-3 border border-slate-200 shadow-inner">
-                                <p class="text-[10px] sm:text-xs text-slate-500 font-bold uppercase tracking-wider text-center mb-2 flex items-center justify-center gap-1">
-                                    <i data-lucide="percent" class="w-3 h-3"></i> Rate Gacha
-                                </p>
-                                <div class="flex flex-wrap justify-center gap-2 sm:gap-3 text-[10px] sm:text-xs font-bold">
-                                    <span class="px-2 py-1 bg-yellow-100 text-yellow-700 rounded-md border border-yellow-200 shadow-sm">UR: 2%</span>
-                                    <span class="px-2 py-1 bg-purple-100 text-purple-700 rounded-md border border-purple-200 shadow-sm">SR: 8%</span>
-                                    <span class="px-2 py-1 bg-cyan-100 text-cyan-700 rounded-md border border-cyan-200 shadow-sm">R: 30%</span>
-                                    <span class="px-2 py-1 bg-white text-slate-600 rounded-md border border-slate-300 shadow-sm">C: 60%</span>
-                                </div>
+                            <div class="card-back">
+                                <img src="https://imphnen.dev/logo.webp" class="w-48 filter brightness-200">
+                                <p class="text-white/20 text-[10px] mt-4 font-black tracking-widest uppercase">Gacha Kasta IMPHNEN</p>
                             </div>
                         </div>
                     </div>
 
-                    <!-- KANAN: Hasil Gacha TCG Card (Bisa Di-Flip) -->
-                    <div class="w-full lg:w-1/2 flex flex-col justify-center items-center mt-6 lg:mt-0 px-2 pb-12 lg:pb-0">
-                        
-                        <div id="cardWrapperMain" class="card-wrapper relative max-w-[280px] sm:max-w-[320px] md:max-w-[340px] lg:max-w-[360px]" onclick="flipCard()">
-                            
-                            <div id="cardInner" class="card-inner">
-                                <!-- ================= KARTU DEPAN ================= -->
-                                <div id="cardFront" class="card-front bg-empty border-[8px] sm:border-[10px] border-[#334155] flex flex-col p-2 sm:p-3 overflow-hidden">
-                                    
-                                    <div class="holo-foil"></div> <!-- Shiny Effect -->
-
-                                    <!-- Card Inner Background -->
-                                    <div class="h-full w-full bg-slate-900 rounded-[1rem] flex flex-col relative z-20 overflow-hidden shadow-inner">
-                                        
-                                        <!-- Header: Logos & KEMALASAN -->
-                                        <div class="h-10 sm:h-12 w-full bg-gradient-to-r from-black/90 to-transparent flex items-center justify-between px-3 sm:px-4 z-10 absolute top-0 left-0 right-0">
-                                            <!-- Dual Logo (IMPHNEN x KTIK) -->
-                                            <div class="flex items-center gap-1.5">
-                                                <img src="https://imphnen.dev/logo.webp" alt="IMPHNEN" class="h-4 sm:h-5 object-contain drop-shadow-[0_2px_4px_rgba(0,0,0,0.8)]" onerror="this.style.display='none'">
-                                                <span class="text-white/30 text-[8px] font-black">X</span>
-                                                <img src="https://ktik.me/logo.png" alt="ktik.me" class="h-3 sm:h-4 object-contain drop-shadow-[0_2px_4px_rgba(0,0,0,0.8)]" onerror="this.style.display='none'">
-                                            </div>
-                                            <div class="flex flex-col items-end leading-none">
-                                                <span class="text-[7px] sm:text-[8px] font-bold text-red-400 uppercase tracking-widest">Kemalasan</span>
-                                                <span id="cardKemalasan" class="text-sm sm:text-lg font-black text-white drop-shadow-md">???</span>
-                                            </div>
-                                        </div>
-
-                                        <!-- Main Art Box -->
-                                        <div class="w-full h-[45%] sm:h-[50%] relative bg-slate-800 border-b-4 border-slate-700/50 mt-10 sm:mt-12 overflow-hidden flex items-center justify-center group">
-                                            
-                                            <!-- Loading Spinner / Fallback -->
-                                            <div id="artPlaceholder" class="absolute inset-0 flex flex-col items-center justify-center bg-slate-900 z-10">
-                                                <i data-lucide="loader-2" class="w-10 h-10 text-primary animate-spin mb-2"></i>
-                                                <span class="text-[10px] text-slate-400 font-mono tracking-widest uppercase">LOADING...</span>
-                                            </div>
-                                            
-                                            <!-- Image Stock -->
-                                            <img id="cardImage" src="" class="absolute inset-0 w-full h-full object-cover opacity-0 transition-opacity duration-300 scale-105 group-hover:scale-110 transition-transform z-20" alt="Card Art" />
-                                            
-                                            <div class="absolute inset-0 shadow-[inset_0_0_30px_rgba(0,0,0,0.8)] pointer-events-none z-30"></div>
-                                        </div>
-
-                                        <!-- Stats Bar -->
-                                        <div class="h-6 w-full bg-slate-800/80 flex items-center justify-between px-3 text-[8px] sm:text-[9px] font-bold text-slate-400 uppercase tracking-widest border-b border-white/5">
-                                            <span id="cardRarityBadge">Rarity: ???</span>
-                                            <span id="cardTypeBadge">Type: Mageran</span>
-                                        </div>
-
-                                        <!-- Moves / Description Area -->
-                                        <div class="flex-grow flex flex-col p-3 sm:p-4 bg-gradient-to-b from-slate-900 to-black relative">
-                                            
-                                            <!-- NAMA USER & TITLE -->
-                                            <div class="flex flex-col gap-0.5 mb-2 pb-2 border-b border-white/10">
-                                                <h4 id="cardNameBadge" class="text-sm sm:text-base font-black text-white uppercase tracking-wide truncate drop-shadow-md w-full">
-                                                    NAMA USER
-                                                </h4>
-                                                <span id="cardTitle" class="text-[10px] sm:text-[11px] font-bold text-primary uppercase leading-tight">
-                                                    MENUNGGU KARTU
-                                                </span>
-                                            </div>
-                                            
-                                            <!-- Attack Info -->
-                                            <div class="flex items-start gap-2">
-                                                <div class="mt-0.5"><i data-lucide="swords" class="w-4 h-4 text-slate-500"></i></div>
-                                                <div class="w-full">
-                                                    <h4 id="cardAttack" class="text-[10px] sm:text-[11px] font-black text-slate-200 uppercase tracking-wide">???</h4>
-                                                    <p id="cardDesc" class="text-[9px] sm:text-[10px] text-slate-400 font-medium leading-tight mt-1 text-justify">
-                                                        "Silakan masukkan nama lu dan tekan tombol Gacha untuk memanggil takdir TCG lu."
-                                                    </p>
-                                                </div>
-                                            </div>
-                                        </div>
-
-                                        <!-- Footer / Copyright -->
-                                        <div class="h-6 bg-black flex items-center justify-between px-3 text-[7px] sm:text-[8px] font-mono text-slate-600 mt-auto border-t border-white/10">
-                                            <span class="font-bold text-slate-500">Illus. Stock Image</span>
-                                            <span id="randomId">ID: ####-####</span>
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <!-- ================= KARTU BELAKANG ================= -->
-                                <div class="card-back">
-                                    <div class="absolute inset-0 bg-grid-pattern opacity-10 rounded-[1rem]"></div>
-                                    <div class="flex flex-col items-center justify-center relative z-10 w-full h-full p-4 border border-white/10 rounded-[1rem] shadow-[inset_0_0_50px_rgba(0,0,0,0.8)]">
-                                        <!-- Logo IMPHNEN -->
-                                        <img src="https://imphnen.dev/logo.webp" alt="IMPHNEN" class="w-3/4 mb-6 drop-shadow-[0_0_15px_rgba(59,130,246,0.6)]" onerror="this.style.display='none'">
-                                        <!-- Cross X -->
-                                        <span class="text-white/20 text-xs font-black mb-6">X</span>
-                                        <!-- Logo Ktik -->
-                                        <img src="https://ktik.me/logo.png" alt="ktik.me" class="w-1/2 drop-shadow-[0_0_15px_rgba(255,255,255,0.4)]" onerror="this.src='https://ktik.me/favicon.svg'">
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Info Klik -->
-                        <p id="flipHint" class="text-[10px] font-bold text-slate-400 mt-3 animate-pulse hidden tracking-widest uppercase">
-                            <i data-lucide="mouse-pointer-click" class="inline w-3 h-3 mb-0.5"></i> Tap kartu untuk membalik
-                        </p>
-
-                        <!-- ACTION BUTTON (SHARE) -->
-                        <div id="shareActionContainer" class="hidden w-full max-w-[280px] sm:max-w-[320px] md:max-w-[340px] lg:max-w-[360px] mt-4">
-                            <button onclick="shareResultAPI()" class="w-full bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white text-sm sm:text-base font-black py-3 sm:py-4 px-4 rounded-2xl flex items-center justify-center gap-3 shadow-[0_10px_20px_rgba(59,130,246,0.3)] transition-all active:scale-95 border border-blue-400">
-                                <i data-lucide="share-2" class="w-5 h-5"></i> Pamerkan Kartu Lu!
-                            </button>
-                        </div>
-                        
+                    <div id="shareActionContainer" class="hidden mt-8 w-full max-w-[320px]">
+                        <button onclick="shareResultAPI()" class="w-full bg-white text-slate-900 border-2 border-slate-200 font-black py-4 rounded-2xl flex items-center justify-center gap-3 hover:bg-slate-50 transition-all">
+                            <i data-lucide="share-2" class="w-5 h-5 text-primary"></i> SHARE KARTU
+                        </button>
                     </div>
                 </div>
             </div>
-        </section>
 
-        <!-- SECTION SPONSOR (KTIK.ME) -->
-        <section class="w-full bg-gradient-to-br from-slate-900 via-indigo-950 to-slate-900 py-16 relative overflow-hidden border-t border-slate-800">
-            <div class="absolute top-0 right-0 -translate-y-1/2 translate-x-1/3 w-96 h-96 bg-cyan-400/20 blur-[100px] rounded-full pointer-events-none"></div>
-            <div class="absolute bottom-0 left-0 translate-y-1/2 -translate-x-1/3 w-96 h-96 bg-purple-600/20 blur-[100px] rounded-full pointer-events-none"></div>
-            
-            <div class="container mx-auto px-4 max-w-4xl relative z-10 text-center">
-                <div class="inline-flex items-center gap-1.5 px-4 py-1.5 rounded-full bg-white/5 border border-white/10 text-white text-[10px] sm:text-xs font-bold uppercase tracking-widest mb-6 backdrop-blur-sm">
-                    <i data-lucide="star" class="w-3.5 h-3.5 text-yellow-400 animate-pulse"></i> Disponsori Oleh
+            <div class="mt-20">
+                <div class="flex items-center gap-4 mb-8">
+                    <div class="h-px flex-1 bg-slate-200"></div>
+                    <h2 class="text-sm font-black text-slate-400 uppercase tracking-widest">Koleksi Kartu Lu</h2>
+                    <div class="h-px flex-1 bg-slate-200"></div>
                 </div>
-                
-                <h2 class="text-3xl sm:text-4xl md:text-5xl font-black text-white mb-4 leading-tight tracking-tight">
-                    Klaim <br class="sm:hidden" />
-                    <span class="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 via-blue-400 to-purple-400">Subdomain Gratis</span> Anda Sekarang!
-                </h2>
-                
-                <p class="text-slate-300 text-sm sm:text-base md:text-lg mb-8 max-w-2xl mx-auto leading-relaxed">
-                    Di <b>ktik.me</b>, Anda bisa mendapatkan <b>subdomain profesional secara GRATIS!</b> Dilengkapi dengan fitur <b>Link in Bio</b> untuk menampilkan karya dan portofolio, serta <b>Shortlink</b> agar tautan Anda lebih ringkas dan rapi. Semuanya terintegrasi dalam satu platform eksklusif tanpa gangguan iklan.
-                </p>
-                
-                <a href="https://ktik.me/" target="_blank" rel="noopener noreferrer" 
-                   class="inline-flex items-center justify-center gap-2 px-8 py-4 rounded-full bg-white text-indigo-950 font-black text-sm sm:text-base transition-all duration-300 hover:scale-105 hover:bg-slate-50 hover:shadow-[0_0_30px_rgba(255,255,255,0.3)] active:scale-95 group">
-                    Coba ktik.me Gratis
-                    <i data-lucide="arrow-right" class="w-5 h-5 group-hover:translate-x-1 transition-transform"></i>
-                </a>
+                <div id="collectionGrid" class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4">
+                    </div>
             </div>
         </section>
 
+        <section class="bg-slate-900 py-16 text-center text-white">
+            <p class="text-xs font-bold text-slate-500 uppercase tracking-widest mb-4">Powered by</p>
+            <a href="https://ktik.me" target="_blank" class="text-3xl font-black hover:text-primary transition-colors">ktik.me</a>
+            <p class="text-slate-400 text-sm mt-4">Klaim subdomain gratis & link-in-bio lu sekarang!</p>
+        </section>
     </main>
 
-    <!-- Footer -->
-    <footer class="w-full py-5 sm:py-6 bg-white border-t border-slate-200 relative z-40">
-        <div class="container mx-auto px-4 flex flex-col md:flex-row items-center justify-between gap-3 text-center md:text-left">
-            <p class="text-[10px] sm:text-xs font-semibold text-slate-500">
-                © 2026 Fan-made Simulator. Tidak berafiliasi dengan official IMPHNEN.
-            </p>
-            <p class="text-xs font-bold text-slate-600 flex items-center justify-center md:justify-start gap-1">
-                Powered by <a href="https://ktik.me" target="_blank" rel="noopener noreferrer" class="text-primary hover:text-purple-600 hover:underline transition-colors flex items-center gap-1">ktik.me</a>
-            </p>
-        </div>
-    </footer>
-
-    <!-- Script Logic -->
     <script>
         lucide.createIcons();
 
-        // Database Gacha 
         const gachaData = [
-            { id: "U1", rarity: "UR", title: "CEO of Turu", type: "Dewa Tidur", attack: "Sleep Coding", kemalasan: "999%", desc: "Ngoding cukup lewat mimpi. Begitu bangun, tiba-tiba project udah siap deploy ke production tanpa ada error sedikitpun.", image: "https://images.unsplash.com/photo-1531104985437-602d73aaab64?auto=format&fit=crop&w=400&q=80" },
-            { id: "U2", rarity: "UR", title: "Duta Semicolon", type: "Cenayang Code", attack: "Firasat Batin", kemalasan: "850%", desc: "Tidak butuh linter. Punya indera keenam yang ajaib untuk menemukan titik koma yang hilang di dalam ratusan ribu baris kode.", image: "https://images.unsplash.com/photo-1555066931-4365d14bab8c?auto=format&fit=crop&w=400&q=80" },
-            { id: "U3", rarity: "UR", title: "Lord of Prod.", type: "Madlad", attack: "Friday Push", kemalasan: "1000%", desc: "Nge-push kode langsung ke main branch pas hari Jumat sore jam 5. Kalau server tiba-tiba down, dia pura-pura tidak tahu.", image: "https://images.unsplash.com/photo-1614064641913-a530a504639b?auto=format&fit=crop&w=400&q=80" },
-            
-            { id: "S1", rarity: "SR", title: "Arch Linux Enjoyer", type: "Terminal Wibu", attack: "Terminal Rice", kemalasan: "500%", desc: "Menghabiskan waktu 5 jam tiap hari cuma buat ganti tema dan font terminal Linux. Giliran disuruh tugas malah ketiduran.", image: "https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?auto=format&fit=crop&w=400&q=80" },
-            { id: "S2", rarity: "SR", title: "Prompt Engineer", type: "AI Whisperer", attack: "AI Manipulator", kemalasan: "450%", desc: "Sangat jago merangkai kata demi kata untuk menyuruh ChatGPT. Saking jagonya, AI-nya sampai menangis terharu melihat prompt-nya.", image: "https://images.unsplash.com/photo-1620712943543-bcc4688e7485?auto=format&fit=crop&w=400&q=80" },
-            { id: "S3", rarity: "SR", title: "Stack Overflow Ninja", type: "Jalan Ninja", attack: "Ctrl+C Ctrl+V", kemalasan: "480%", desc: "Tidak pernah nulis kode dari nol. Hafal di luar kepala kombinasi sakti Ctrl+C dan Ctrl+V. StackOverflow adalah kitab sucinya.", image: "https://images.unsplash.com/photo-1555099962-4199c345e5dd?auto=format&fit=crop&w=400&q=80" },
-            
-            { id: "R1", rarity: "R", title: "Inspect Element", type: "Hacker Gadungan", attack: "Fake Rich", kemalasan: "200%", desc: "Kemampuan codingnya sebatas Inspect Element, ganti saldo BCA jadi miliaran, lalu di-screenshot buat pamer di grup.", image: "https://images.unsplash.com/photo-1526304640581-d334cdbbf45e?auto=format&fit=crop&w=400&q=80" },
-            { id: "R2", rarity: "R", title: "Dark Mode Cultist", type: "Vampir Digital", attack: "Vampire Sight", kemalasan: "250%", desc: "Matanya akan langsung memerah dan iritasi parah jika tidak sengaja melihat IDE atau layar website yang berwarna putih terang.", image: "https://images.unsplash.com/photo-1550751827-4bd374c3f58b?auto=format&fit=crop&w=400&q=80" },
-            { id: "R3", rarity: "R", title: "Tutorial Hell", type: "Penonton Setia", attack: "Endless Watch", kemalasan: "150%", desc: "Sudah mengkhatamkan ratusan jam video tutorial dari berbagai bahasa pemrograman, tapi belum punya satupun portofolio.", image: "https://images.unsplash.com/photo-1516259762381-22954d7d3ad2?auto=format&fit=crop&w=400&q=80" },
-            
-            { id: "C1", rarity: "C", title: "Junior Mageran", type: "Kaum Rebahan", attack: "VS Code Load", kemalasan: "90%", desc: "Niatnya mau produktif ngoding, tapi baru melihat animasi loading VS Code saja energinya langsung terkuras habis.", image: "https://images.unsplash.com/photo-1498050108023-c5249f4df085?auto=format&fit=crop&w=400&q=80" },
-            { id: "C2", rarity: "C", title: "Mahasiswa Smt 14", type: "Beban Kampus", attack: "Pasrah", kemalasan: "99%", desc: "Skripsi baru ACC judul setelah bertahun-tahun. Sekarang kerjaannya cuma pasrah rebahan menunggu keajaiban turun dari langit.", image: "https://images.unsplash.com/photo-1434030216411-0b793f4b4173?auto=format&fit=crop&w=400&q=80" },
-            { id: "C3", rarity: "C", title: "HTML Programmer", type: "Pemula Abadi", attack: "Hello World", kemalasan: "50%", desc: "Puncak karir programmingnya adalah berhasil mencetak teks tebal memakai tag HTML. Setelah itu, hanyalah rentetan error.", image: "https://images.unsplash.com/photo-1542831371-29b0f74f9713?auto=format&fit=crop&w=400&q=80" }
+            { id: "U1", rarity: "UR", title: "CEO of Turu", attack: "Sleep Coding", kemalasan: "999%", desc: "Ngoding lewat mimpi. Bangun-bangun project udah ready prod.", image: "https://images.unsplash.com/photo-1531104985437-602d73aaab64?q=80&w=400" },
+            { id: "S1", rarity: "SR", title: "Prompt Engineer", attack: "AI Injection", kemalasan: "500%", desc: "Bisa bikin AI nurut hanya dengan satu kalimat sakti.", image: "https://images.unsplash.com/photo-1620712943543-bcc4688e7485?q=80&w=400" },
+            { id: "R1", rarity: "R", title: "Inspect Element", attack: "Fake Rich", kemalasan: "200%", desc: "Jago ngedit saldo bank di browser buat pamer di grup.", image: "https://images.unsplash.com/photo-1526304640581-d334cdbbf45e?q=80&w=400" },
+            { id: "C1", rarity: "C", title: "Junior Mageran", attack: "Nanti Dulu", kemalasan: "99%", desc: "Baru buka VS Code, energinya udah abis.", image: "https://images.unsplash.com/photo-1498050108023-c5249f4df085?q=80&w=400" }
         ];
 
         let pullCount = 0;
         let commonStreak = 0;
         let isRolling = false;
-        let scrambleInterval;
-        let currentShareData = null; 
+        let currentShareData = null;
 
-        // Fungsi untuk flip kartu
+        // Initialize LocalStorage
+        let myCollection = JSON.parse(localStorage.getItem('imphnen_collection')) || [];
+
+        document.addEventListener("DOMContentLoaded", () => {
+            renderCollection();
+            checkShareLink();
+        });
+
         function flipCard() {
             if (isRolling) return;
-            const cardInner = document.getElementById('cardInner');
-            if (cardInner) {
-                cardInner.classList.toggle('is-flipped');
+            document.getElementById('cardInner').classList.toggle('is-flipped');
+        }
+
+        function prepareGacha() {
+            if (isRolling) return;
+            const name = document.getElementById('playerName').value.trim();
+            if (!name) return alert("Isi nama dulu bos!");
+
+            isRolling = true;
+            document.getElementById('cardInner').classList.remove('is-flipped');
+            document.getElementById('cardWrapperMain').classList.add('anim-rolling');
+            
+            setTimeout(() => {
+                finishGacha(name);
+            }, 1500);
+        }
+
+        function finishGacha(name) {
+            pullCount++;
+            let item;
+            const rand = Math.random() * 100;
+
+            if (commonStreak >= 10) {
+                item = gachaData.find(x => x.rarity === "SR");
+                commonStreak = 0;
+            } else {
+                if (rand <= 5) item = gachaData[0]; // UR
+                else if (rand <= 15) item = gachaData[1]; // SR
+                else if (rand <= 45) item = gachaData[2]; // R
+                else {
+                    item = gachaData[3]; // C
+                    commonStreak++;
+                }
+            }
+
+            const pullId = Math.random().toString(36).substring(7).toUpperCase();
+            updateCardUI(name, item, pullId);
+            saveToCollection(name, item, pullId);
+
+            // Reset UI State
+            isRolling = false;
+            document.getElementById('cardWrapperMain').classList.remove('anim-rolling');
+            document.getElementById('shareActionContainer').classList.remove('hidden');
+            
+            if(item.rarity === "UR" || item.rarity === "SR") {
+                confetti({ particleCount: 150, spread: 70, origin: { y: 0.6 } });
             }
         }
 
-        // ==========================================
-        // SAFE FALLBACK WRAPPER
-        // ==========================================
-        function resetGachaUI() {
-            try {
-                isRolling = false;
-                clearInterval(scrambleInterval);
-                const btn = document.getElementById('gachaBtn');
-                if(btn) {
-                    document.getElementById('btnText').innerText = `PULL KARTU SEKARANG`;
-                    document.getElementById('btnIconWrapper').innerHTML = `<i data-lucide="scan-line" class="w-6 h-6 group-hover:rotate-12 transition-transform"></i>`;
-                    btn.classList.remove('opacity-80', 'cursor-not-allowed');
-                    btn.disabled = false;
-                }
-                const wrapper = document.getElementById('cardWrapperMain');
-                if(wrapper) wrapper.classList.remove('anim-rolling');
-                lucide.createIcons();
-            } catch(e) { console.error("Reset Error", e); }
+        function updateCardUI(name, item, pullId) {
+            currentShareData = { n: name, id: item.id, pull: pullId };
+            document.getElementById('cardNameBadge').innerText = name;
+            document.getElementById('cardKemalasan').innerText = item.kemalasan;
+            document.getElementById('cardTitle').innerText = item.title;
+            document.getElementById('cardDesc').innerText = item.desc;
+            document.getElementById('randomId').innerText = `ID: ${pullId}`;
+            document.getElementById('pullCountDisplay').innerText = pullCount;
+            document.getElementById('pityDisplay').innerText = `${commonStreak}/10`;
+
+            const cardFront = document.getElementById('cardFront');
+            cardFront.className = `card-front border-[10px] overflow-hidden flex flex-col p-3 shine-effect bg-${item.rarity.toLowerCase()} border-${item.rarity.toLowerCase()}`;
+            
+            const img = document.getElementById('cardImage');
+            img.src = item.image;
+            img.style.opacity = "1";
         }
 
-        // ==========================================
-        // URL SHARE CHECKER
-        // ==========================================
-        document.addEventListener("DOMContentLoaded", () => {
+        function saveToCollection(name, item, pullId) {
+            const newEntry = { name, rarity: item.rarity, title: item.title, id: pullId, date: new Date().toLocaleDateString() };
+            myCollection.unshift(newEntry);
+            localStorage.setItem('imphnen_collection', JSON.stringify(myCollection));
+            renderCollection();
+        }
+
+        function renderCollection() {
+            const grid = document.getElementById('collectionGrid');
+            grid.innerHTML = myCollection.map(c => `
+                <div class="bg-white p-3 rounded-xl border border-slate-100 shadow-sm hover:shadow-md transition-all">
+                    <div class="flex justify-between items-start mb-2">
+                        <span class="text-[8px] font-black px-2 py-0.5 rounded bg-slate-900 text-white">${c.rarity}</span>
+                        <span class="text-[8px] text-slate-400 font-mono">${c.id}</span>
+                    </div>
+                    <p class="text-[10px] font-black truncate">${c.name}</p>
+                    <p class="text-[8px] text-primary font-bold uppercase">${c.title}</p>
+                    <p class="text-[7px] text-slate-300 mt-2">${c.date}</p>
+                </div>
+            `).join('');
+        }
+
+        function shareResultAPI() {
+            if (!currentShareData) return;
+            const encoded = btoa(unescape(encodeURIComponent(JSON.stringify(currentShareData))));
+            const url = window.location.origin + window.location.pathname + "?r=" + encoded;
+            
+            if (navigator.share) {
+                navigator.share({ title: 'Kasta Gacha Gue!', url: url });
+            } else {
+                navigator.clipboard.writeText(url);
+                alert("Link disalin ke clipboard!");
+            }
+        }
+
+        function checkShareLink() {
             const urlParams = new URLSearchParams(window.location.search);
             const shareCode = urlParams.get('r');
-            
             if (shareCode) {
                 try {
                     const decoded = JSON.parse(decodeURIComponent(escape(atob(shareCode))));
-                    
-                    document.getElementById('badgeText').innerHTML = `👀 Mengintip Kartu Orang`;
-                    document.getElementById('mainTitle').innerHTML = `Kartu Gacha <br/> <span class="bg-clip-text text-transparent bg-gradient-to-r from-primary via-blue-600 to-purple-600">si ${decoded.n}</span>`;
-                    document.getElementById('mainDesc').innerText = "Apakah lu bisa dapet kartu yang lebih langka dari dia? Adu hoki lu sekarang!";
-                    
-                    document.getElementById('inputGroup').classList.add('hidden');
-                    document.getElementById('statsGroup').classList.add('hidden');
-                    document.getElementById('ratesGroup').classList.add('hidden');
-                    
-                    const btn = document.getElementById('gachaBtn');
-                    document.getElementById('btnText').innerText = `TES HOKI LU SENDIRI!`;
-                    document.getElementById('btnIconWrapper').innerHTML = `<i data-lucide="dices" class="w-6 h-6 animate-bounce"></i>`;
-                    btn.onclick = () => { window.location.href = window.location.pathname; };
-
-                    renderCardBypass(decoded.n, decoded.id, decoded.pull);
-                } catch (error) {
-                    console.log("Invalid share link.");
-                }
-            }
-        });
-
-        function renderCardBypass(playerName, cardId, pullId) {
-            let item = gachaData.find(x => x.id === cardId);
-            if(!item) {
-                item = { id: "M1", rarity: "MYTHIC", title: "Beban Server", type: "Admin Sakti", attack: "Kick Member", kemalasan: "MAX", desc: "Tukang kick member, padahal sendirinya mager.", image: "https://images.unsplash.com/photo-1555680202-c86f0e12f086?auto=format&fit=crop&w=400&q=80" };
-            }
-            
-            updateCardUI(playerName, item, pullId);
-            
-            currentShareData = { name: playerName, item: item, id: pullId };
-            const shareContainer = document.getElementById('shareActionContainer');
-            if(shareContainer) {
-                shareContainer.classList.remove('hidden');
-                shareContainer.classList.add('flex');
-            }
-            const flipHint = document.getElementById('flipHint');
-            if(flipHint) flipHint.classList.remove('hidden');
-        }
-
-        // ==========================================
-        // GACHA ENGINE (100% NON-BLOCKING)
-        // ==========================================
-        function prepareGacha() {
-            if (isRolling) return;
-            
-            const nameInput = document.getElementById('playerName').value.trim();
-            if (!nameInput) {
-                const inputEl = document.getElementById('playerName');
-                inputEl.classList.add('border-red-500', 'translate-x-1');
-                setTimeout(() => inputEl.classList.replace('translate-x-1', '-translate-x-1'), 100);
-                setTimeout(() => inputEl.classList.replace('-translate-x-1', 'translate-x-1'), 200);
-                setTimeout(() => inputEl.classList.remove('border-red-500', 'translate-x-1'), 300);
-                inputEl.focus();
-                return;
-            }
-
-            try {
-                isRolling = true;
-                
-                // Pastikan kartu menghadap depan saat di-roll ulang
-                document.getElementById('cardInner').classList.remove('is-flipped');
-                document.getElementById('flipHint').classList.add('hidden');
-                
-                const shareContainer = document.getElementById('shareActionContainer');
-                shareContainer.classList.add('hidden');
-                shareContainer.classList.remove('flex', 'anim-pop-up');
-
-                const btn = document.getElementById('gachaBtn');
-                btn.disabled = true;
-                document.getElementById('btnText').innerText = `MENGUNDI TAKDIR...`;
-                document.getElementById('btnIconWrapper').innerHTML = `<i data-lucide="loader-2" class="w-6 h-6 animate-spin"></i>`;
-                btn.classList.add('opacity-80', 'cursor-not-allowed');
-                
-                const wrapper = document.getElementById('cardWrapperMain');
-                const cardFront = document.getElementById('cardFront');
-                
-                wrapper.classList.add('anim-rolling');
-                cardFront.className = "card-front bg-empty border-[8px] sm:border-[10px] border-[#334155] overflow-hidden flex flex-col p-2 sm:p-3";
-                
-                // Reset Image to Loading Spinner immediately
-                document.getElementById('cardImage').classList.remove('opacity-100');
-                document.getElementById('cardImage').classList.add('opacity-0');
-                
-                const placeholder = document.getElementById('artPlaceholder');
-                placeholder.classList.remove('hidden');
-                placeholder.innerHTML = `
-                    <i data-lucide="loader-2" class="w-10 h-10 text-primary animate-spin mb-2"></i>
-                    <span class="text-[10px] text-slate-400 font-mono tracking-widest uppercase">LOADING...</span>
-                `;
-                lucide.createIcons();
-
-                // Animasi teks acak (Scramble)
-                scrambleInterval = setInterval(() => {
-                    const chars = '!?#@%&$01';
-                    const targetEl = document.getElementById('cardAttack');
-                    if(targetEl) targetEl.innerText = Array(8).fill(0).map(()=>chars[Math.floor(Math.random()*chars.length)]).join('');
-                }, 50);
-
-                document.getElementById('cardNameBadge').innerText = nameInput.substring(0,12) + "...";
-                document.getElementById('cardTitle').innerText = "ROLLING...";
-                document.getElementById('cardRarityBadge').innerHTML = "Rarity: ROLLING...";
-                cardFront.classList.remove('shine-effect');
-
-                // FAST REVEAL (0.5 Detik)
-                setTimeout(() => {
-                    try {
-                        finishReveal(nameInput);
-                    } catch(e) {
-                        console.error(e);
-                        resetGachaUI();
-                    }
-                }, 500); 
-
-            } catch (error) {
-                console.error(error);
-                resetGachaUI();
-            }
-        }
-
-        function finishReveal(playerName) {
-            pullCount++;
-            clearInterval(scrambleInterval);
-            
-            let resultItem = null;
-            let easterEgg = false;
-
-            if (playerName.toLowerCase() === "admin") {
-                easterEgg = true;
-                resultItem = { id: "M1", rarity: "MYTHIC", title: "Beban Server", type: "Admin Sakti", attack: "Kick Member", kemalasan: "MAX", desc: "Tukang kick member, padahal sendirinya mager.", image: "https://images.unsplash.com/photo-1555680202-c86f0e12f086?auto=format&fit=crop&w=400&q=80" };
-            } 
-            else if (commonStreak >= 10) {
-                const srItems = gachaData.filter(x => x.rarity === "SR");
-                resultItem = srItems[Math.floor(Math.random() * srItems.length)];
-                commonStreak = 0; 
-            } 
-            else {
-                let rTarget = "";
-                const rand = Math.random() * 100;
-                if (rand <= 2) { rTarget = "UR"; commonStreak = 0; }
-                else if (rand <= 10) { rTarget = "SR"; commonStreak = 0; }
-                else if (rand <= 40) { rTarget = "R"; commonStreak = 0; }
-                else { rTarget = "C"; commonStreak++; }
-
-                const pool = gachaData.filter(x => x.rarity === rTarget);
-                resultItem = pool[Math.floor(Math.random() * pool.length)];
-            }
-
-            const pullChars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
-            let randomCode = '';
-            for(let i=0; i<8; i++) randomCode += pullChars.charAt(Math.floor(Math.random() * pullChars.length));
-            const pullId = `${randomCode.substring(0,4)}-${randomCode.substring(4,8)}`;
-
-            currentShareData = { name: playerName, item: resultItem, id: pullId };
-
-            // Update UI DOM secara sinkron
-            updateCardUI(playerName, resultItem, pullId);
-            
-            // Tembakkan Confetti
-            try {
-                if (typeof confetti === 'function') {
-                    if (resultItem.rarity === 'UR' || easterEgg) {
-                        let duration = 3 * 1000;
-                        let animationEnd = Date.now() + duration;
-                        let defaults = { startVelocity: 30, spread: 360, ticks: 60, zIndex: 100 };
-                        let interval = setInterval(function() {
-                            let timeLeft = animationEnd - Date.now();
-                            if (timeLeft <= 0) return clearInterval(interval);
-                            let particleCount = 50 * (timeLeft / duration);
-                            confetti(Object.assign({}, defaults, { particleCount, origin: { x: randomInRange(0.1, 0.3), y: Math.random() - 0.2 } }));
-                            confetti(Object.assign({}, defaults, { particleCount, origin: { x: randomInRange(0.7, 0.9), y: Math.random() - 0.2 } }));
-                        }, 250);
-                    } else if (resultItem.rarity === 'SR') {
-                        confetti({ particleCount: 150, spread: 100, origin: { y: 0.6 }, zIndex: 100, colors: ['#8A2BE2', '#00C9FF', '#FFFFFF'] });
-                    }
-                }
-            } catch (e) { console.error("Confetti error"); }
-
-            setTimeout(() => {
-                const shareContainer = document.getElementById('shareActionContainer');
-                shareContainer.classList.remove('hidden');
-                shareContainer.classList.add('flex', 'anim-pop-up');
-                
-                document.getElementById('flipHint').classList.remove('hidden');
-            }, 200);
-
-            // Auto scroll di HP
-            if (window.innerWidth < 1024) {
-                setTimeout(() => {
-                    const cardElement = document.getElementById('cardWrapperMain');
-                    const y = cardElement.getBoundingClientRect().top + window.pageYOffset - 20;
-                    window.scrollTo({top: y, behavior: 'smooth'});
-                }, 100);
-            }
-        }
-
-        function randomInRange(min, max) { return Math.random() * (max - min) + min; }
-
-        function updateCardUI(playerName, item, pullId) {
-            
-            const wrapper = document.getElementById('cardWrapperMain');
-            if(wrapper) wrapper.classList.remove('anim-rolling');
-
-            // Hentikan state animasi button
-            isRolling = false;
-            const btn = document.getElementById('gachaBtn');
-            btn.disabled = false;
-            document.getElementById('btnText').innerText = `PULL KARTU LAGI`;
-            document.getElementById('btnIconWrapper').innerHTML = `<i data-lucide="dices" class="w-6 h-6 animate-bounce"></i>`;
-            btn.classList.remove('opacity-80', 'cursor-not-allowed');
-
-            const cardFront = document.getElementById('cardFront');
-            const rarityBadge = document.getElementById('cardRarityBadge');
-            
-            // Assign Teks
-            const elId = document.getElementById('randomId'); if(elId) elId.innerText = `ID: ${pullId}`;
-            const elName = document.getElementById('cardNameBadge'); if(elName) elName.innerText = playerName;
-            const elHp = document.getElementById('cardKemalasan'); if(elHp) elHp.innerText = item.kemalasan; 
-            const elType = document.getElementById('cardTypeBadge'); if(elType) elType.innerText = `Type: ${item.type}`;
-            const elTitle = document.getElementById('cardTitle'); if(elTitle) elTitle.innerText = item.title;
-            const elAttack = document.getElementById('cardAttack'); if(elAttack) elAttack.innerText = item.attack;
-            const elDesc = document.getElementById('cardDesc'); if(elDesc) elDesc.innerText = item.desc;
-            
-            cardFront.className = "card-front border-[8px] sm:border-[10px] overflow-hidden flex flex-col p-2 sm:p-3";
-
-            let themeBgClass, themeBorderClass, badgeText;
-
-            if (item.rarity === "MYTHIC") {
-                badgeText = `<span class="text-red-500 drop-shadow-[0_0_5px_rgba(255,0,0,0.8)]">✦ MYTHIC ✦</span>`;
-                themeBgClass = "bg-mythic"; themeBorderClass = "border-mythic";
-            } else {
-                switch(item.rarity) {
-                    case "UR":
-                        badgeText = `<span class="text-yellow-400 drop-shadow-[0_0_5px_rgba(255,215,0,0.8)]">★ ULTRA RARE ★</span>`;
-                        themeBgClass = "bg-ur"; themeBorderClass = "border-ur";
-                        break;
-                    case "SR":
-                        badgeText = `<span class="text-purple-300 drop-shadow-[0_0_5px_rgba(138,43,226,0.8)]">★ SUPER RARE</span>`;
-                        themeBgClass = "bg-sr"; themeBorderClass = "border-sr";
-                        break;
-                    case "R":
-                        badgeText = `<span class="text-cyan-300">RARE</span>`;
-                        themeBgClass = "bg-r"; themeBorderClass = "border-r";
-                        break;
-                    case "C":
-                        badgeText = `<span class="text-slate-300">COMMON</span>`;
-                        themeBgClass = "bg-c"; themeBorderClass = "border-c";
-                        break;
-                }
-            }
-
-            if(rarityBadge) rarityBadge.innerHTML = `Rarity: ${badgeText}`;
-            cardFront.classList.add(themeBgClass, themeBorderClass);
-            
-            const elCount = document.getElementById('pullCountDisplay'); if(elCount) elCount.innerText = pullCount;
-            const elPity = document.getElementById('pityDisplay'); if(elPity) elPity.innerText = `${commonStreak}/10`;
-
-            // TAMPILAN GAMBAR STOCK
-            const imgEl = document.getElementById('cardImage');
-            const placeholder = document.getElementById('artPlaceholder');
-            
-            if(imgEl && placeholder) {
-                imgEl.src = item.image; 
-                
-                imgEl.onload = () => {
-                    placeholder.classList.add('hidden');
-                    imgEl.classList.remove('opacity-0');
-                    imgEl.classList.add('opacity-100');
-                };
-
-                imgEl.onerror = () => {
-                    placeholder.innerHTML = `
-                        <div class="text-slate-500 flex flex-col items-center">
-                            <i data-lucide="image-off" class="w-10 h-10 mb-2 drop-shadow-md"></i>
-                            <span class="text-[10px] font-black tracking-widest uppercase">IMAGE BLOCKED</span>
-                        </div>
-                    `;
-                    lucide.createIcons();
-                };
-
-                // Failsafe Timeout
-                setTimeout(() => {
-                    if (!imgEl.complete || imgEl.naturalHeight === 0) {
-                        placeholder.innerHTML = `
-                            <div class="text-slate-500 flex flex-col items-center">
-                                <i data-lucide="wifi-off" class="w-10 h-10 mb-2 drop-shadow-md"></i>
-                                <span class="text-[10px] font-black tracking-widest uppercase">SLOW NETWORK</span>
-                            </div>
-                        `;
-                        lucide.createIcons();
-                    }
-                }, 4000);
-            }
-
-            lucide.createIcons(); 
-            void cardFront.offsetWidth; 
-            cardFront.classList.add('shine-effect');
-        }
-
-        // ==========================================
-        // SHARE SYSTEM
-        // ==========================================
-        function shareResultAPI() {
-            if(!currentShareData) return;
-            
-            const r = currentShareData.item.rarity;
-            let emoji = "🥶";
-            if(r === 'UR') emoji = "👑🔥";
-            if(r === 'SR') emoji = "✨😎";
-            if(r === 'R') emoji = "👍😏";
-
-            const shareObj = {
-                n: currentShareData.name,
-                id: currentShareData.item.id, 
-                pull: currentShareData.id
-            };
-            
-            const encodedData = btoa(unescape(encodeURIComponent(JSON.stringify(shareObj))));
-            const shareUrl = window.location.origin + window.location.pathname + "?r=" + encodedData;
-            
-            const textToShare = `Gue dapet kartu [${r}] ${currentShareData.item.title} di TCG Gacha IMPHNEN! ${emoji}\n\nCek kartu gue & adu hoki lu di mari:`;
-
-            if (navigator.share) {
-                navigator.share({
-                    title: 'Kartu Gacha IMPHNEN',
-                    text: textToShare,
-                    url: shareUrl
-                }).catch((error) => console.log('Share dibatalkan', error));
-            } else {
-                navigator.clipboard.writeText(`${textToShare} \n${shareUrl}`).then(() => {
-                    alert("Teks dan Link berhasil disalin ke Clipboard!\n(Browser kamu tidak mendukung fitur Share bawaan HP)");
-                });
+                    const item = gachaData.find(x => x.id === decoded.id) || gachaData[3];
+                    updateCardUI(decoded.n, item, decoded.pull);
+                    document.getElementById('mainTitle').innerHTML = `Kartu Gacha <span class="text-primary">${decoded.n}</span>`;
+                } catch (e) { console.error("Link error"); }
             }
         }
     </script>
