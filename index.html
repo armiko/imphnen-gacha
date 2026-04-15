@@ -85,14 +85,21 @@
             border-radius: 1.5rem;
             box-shadow: 0 25px 50px -12px rgba(0,0,0,0.5);
         }
+        .card-front {
+            transform: rotateY(0deg);
+            -webkit-transform: rotateY(0deg);
+            z-index: 2;
+        }
         .card-back {
             transform: rotateY(180deg);
+            -webkit-transform: rotateY(180deg);
             background: linear-gradient(135deg, #0f172a, #1e293b);
             border: 8px solid #334155;
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
+            z-index: 1;
         }
         @media (min-width: 640px) {
             .card-back { border-width: 10px; }
@@ -103,9 +110,9 @@
             position: absolute; inset: 0; z-index: 40; pointer-events: none; opacity: 0;
             background: linear-gradient(115deg, transparent 20%, rgba(255, 255, 255, 0.8) 40%, rgba(255, 255, 255, 0.2) 45%, transparent 60%);
             background-size: 200% 200%; background-position: -100% 0; mix-blend-mode: color-dodge;
+            border-radius: inherit;
         }
         .shine-effect .holo-foil { animation: shimmer 2.5s ease-in-out infinite; opacity: 1; }
-        @keyframes shimmer { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }
 
         /* UPGRADED GACHA SHAKING EXTREME (DITERAPKAN DI WRAPPER BIAR GAK NABRAK FLIP) */
         @keyframes pullShakeExtreme {
@@ -285,7 +292,7 @@
                         <div id="cardInner" class="card-inner is-flipped"> <!-- Start Face Down -->
                             
                             <!-- BAGIAN DEPAN KARTU (HASIL GACHA) -->
-                            <div id="cardFront" class="card-front bg-empty border-[8px] sm:border-[10px] border-[#334155] flex flex-col p-2 sm:p-3 overflow-hidden">
+                            <div id="cardFront" class="card-front bg-empty border-[8px] sm:border-[10px] border-[#334155] flex flex-col p-2 sm:p-3">
                                 <div class="holo-foil"></div> 
                                 <div class="h-full w-full bg-slate-900 rounded-[1rem] flex flex-col relative z-20 overflow-hidden shadow-inner">
                                     <div class="h-10 sm:h-12 w-full bg-gradient-to-r from-black/90 to-transparent flex items-center justify-between px-3 sm:px-4 z-10 absolute top-0 left-0 right-0">
@@ -662,7 +669,7 @@
         document.getElementById('pityDisplay').innerText = `${commonStreak}/10`;
 
         const cardFront = document.getElementById('cardFront');
-        cardFront.className = `card-front border-[8px] sm:border-[10px] overflow-hidden flex flex-col p-2 sm:p-3 bg-${item.rarity.toLowerCase()} border-${item.rarity.toLowerCase()} shine-effect`;
+        cardFront.className = `card-front border-[8px] sm:border-[10px] flex flex-col p-2 sm:p-3 bg-${item.rarity.toLowerCase()} border-${item.rarity.toLowerCase()} shine-effect`;
         document.getElementById('cardRarityBadge').innerText = `Rarity: ${item.rarity}`;
 
         const img = document.getElementById('cardImage');
