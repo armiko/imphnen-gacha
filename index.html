@@ -1,567 +1,1221 @@
 <!DOCTYPE html>
+
 <html lang="id" class="scroll-smooth">
+
 <head>
+
     <meta charset="UTF-8" />
+
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+
     
-    <title>IMPHNEN - Gacha Kasta Simulator</title>
-    <meta name="title" content="IMPHNEN - Gacha Kasta Simulator" />
-    <meta name="description" content="Adu hoki lu di Simulator Gacha Nasib Warga IMPHNEN (Unofficial). Koleksi kartu kasta tertinggi!" />
+
+    <title>IMPHNEN - Gacha Kasta</title>
+
+    <meta name="title" content="IMPHNEN - Gacha Kasta" />
+
+    <meta name="description" content="Adu hoki lu di Gacha Nasib Warga IMPHNEN (Unofficial). Koleksi kartu kasta tertinggi!" />
+
     <meta name="author" content="Dahono Consulting" />
 
+
+
     <meta property="og:type" content="website" />
+
     <meta property="og:url" content="https://imphnen.ktik.me/" />
-    <meta property="og:title" content="IMPHNEN - Gacha Kasta Simulator" />
+
+    <meta property="og:title" content="IMPHNEN - Gacha Kasta" />
+
     <meta property="og:description" content="Gue dapet kasta apa ya hari ini? Cek hoki lu sekarang!" />
-    <meta property="og:image" content="https://res.cloudinary.com/dy3wbouns/image/upload/Desain_tanpa_judul_ccxnkv.jpg" />
+
+    <meta property="og:image" content="https://imphnen.dev/logo.webp" />
+
+
 
     <meta property="twitter:card" content="summary_large_image" />
-    <meta property="twitter:title" content="IMPHNEN - Gacha Kasta Simulator" />
-    <meta property="twitter:description" content="Adu hoki lu di Simulator Gacha Nasib Warga IMPHNEN (Unofficial)." />
-    <meta property="twitter:image" content="https://res.cloudinary.com/dy3wbouns/image/upload/Desain_tanpa_judul_ccxnkv.jpg" />
+
+    <meta property="twitter:title" content="IMPHNEN - Gacha Kasta" />
+
+    <meta property="twitter:description" content="Adu hoki lu di Gacha Nasib Warga IMPHNEN (Unofficial)." />
+
+    <meta property="twitter:image" content="https://imphnen.dev/logo.webp" />
+
+
 
     <link rel="icon" type="image/png" href="https://ktik.me/favicon.svg" />
+
     
+
     <link rel="preconnect" href="https://fonts.googleapis.com" />
+
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="" />
+
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;700;800;900&display=swap" rel="stylesheet" />
+
     
+
     <script src="https://cdn.tailwindcss.com"></script>
+
     <script src="https://unpkg.com/lucide@latest"></script>
+
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
 
+
+
     <script>
+
       tailwind.config = {
+
         theme: {
+
           extend: {
+
             fontFamily: { sans: ['Poppins', 'sans-serif'] },
+
             colors: {
+
               primary: { DEFAULT: '#3b82f6', 500: '#3b82f6', 600: '#2563eb' }
+
             },
+
             animation: {
+
                 float: 'float 6s ease-in-out infinite',
-                'float-reverse': 'float-reverse 6s ease-in-out infinite',
+
+                'float-delayed': 'float 6s ease-in-out 3s infinite',
+
                 'pulse-slow': 'pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite',
-                'marquee': 'marquee 35s linear infinite',
-                'blob': 'blob 7s infinite',
+
             },
+
             keyframes: {
-                float: { '0%, 100%': { transform: 'translateY(0)' }, '50%': { transform: 'translateY(-15px)' } },
-                'float-reverse': { '0%, 100%': { transform: 'translateY(0)' }, '50%': { transform: 'translateY(15px)' } },
-                marquee: { '0%': { transform: 'translateX(0)' }, '100%': { transform: 'translateX(-50%)' } },
-                blob: { 
-                    '0%': { transform: 'translate(0px, 0px) scale(1)' },
-                    '33%': { transform: 'translate(30px, -50px) scale(1.1)' },
-                    '66%': { transform: 'translate(-20px, 20px) scale(0.9)' },
-                    '100%': { transform: 'translate(0px, 0px) scale(1)' },
-                }
+
+                float: { '0%, 100%': { transform: 'translateY(0) rotate(0deg)' }, '50%': { transform: 'translateY(-15px) rotate(5deg)' } },
+
             }
+
           }
+
         }
+
       }
+
     </script>
 
+
+
     <style>
+
         body { overflow-x: hidden; }
 
+
+
+        /* Seamless Marquee */
+
+        .marquee-content {
+
+            display: flex;
+
+            width: max-content;
+
+            animation: scrolling 25s linear infinite;
+
+        }
+
+        @keyframes scrolling {
+
+            0% { transform: translateX(0); }
+
+            100% { transform: translateX(-50%); }
+
+        }
+
+
+
         /* 3D Flip Card Mechanics */
+
         .card-wrapper { 
+
             perspective: 1500px; 
+
             aspect-ratio: 63 / 88;
+
             width: 100%;
+
         }
+
         .card-inner {
+
             position: relative;
+
             width: 100%;
+
             height: 100%;
+
             transition: transform 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+
             transform-style: preserve-3d;
+
             cursor: pointer;
+
         }
-        .card-inner.is-flipped { transform: rotateY(180deg); }
+
+        .card-inner.is-flipped {
+
+            transform: rotateY(180deg);
+
+        }
 
         .card-front, .card-back {
+
             position: absolute;
+
             width: 100%;
+
             height: 100%;
+
             backface-visibility: hidden;
+
             -webkit-backface-visibility: hidden;
+
             border-radius: 1.5rem;
+
             box-shadow: 0 25px 50px -12px rgba(0,0,0,0.5);
+
         }
+
         .card-back {
+
             transform: rotateY(180deg);
+
             background: linear-gradient(135deg, #0f172a, #1e293b);
+
             border: 8px solid #334155;
+
             display: flex;
+
             flex-direction: column;
+
             align-items: center;
+
             justify-content: center;
+
         }
+
+        @media (min-width: 640px) {
+
+            .card-back { border-width: 10px; }
+
+        }
+
         
+
         /* Holo Foil Overlay */
+
         .holo-foil {
+
             position: absolute; inset: 0; z-index: 40; pointer-events: none; opacity: 0;
+
             background: linear-gradient(115deg, transparent 20%, rgba(255, 255, 255, 0.8) 40%, rgba(255, 255, 255, 0.2) 45%, transparent 60%);
-            background-size: 200% 200%; mix-blend-mode: color-dodge;
+
+            background-size: 200% 200%; background-position: -100% 0; mix-blend-mode: color-dodge;
+
         }
+
+
 
         .shine-effect .holo-foil { animation: shimmer 2.5s ease-in-out infinite; opacity: 1; }
+
         @keyframes shimmer { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }
 
+
+
         /* Gacha Rolling Shake */
+
         @keyframes pullShake {
+
             0%, 100% { transform: translate(0,0) rotate(0deg) scale(0.95); }
+
             25% { transform: translate(-3px, 3px) rotate(-1deg) scale(0.95); }
+
             50% { transform: translate(3px, -3px) rotate(1deg) scale(0.95); }
+
             75% { transform: translate(-3px, -3px) rotate(-1deg) scale(0.95); }
+
         }
+
         .anim-rolling .card-inner { animation: pullShake 0.1s infinite; filter: blur(3px) brightness(0.8); }
 
+
+
         /* TCG Rarity Theme Colors */
+
         .bg-ur { background: linear-gradient(135deg, #FFDF00, #D4AF37, #B8860B); }
+
         .bg-sr { background: linear-gradient(135deg, #FF00FF, #8A2BE2, #4B0082); }
+
         .bg-r { background: linear-gradient(135deg, #00FFFF, #1E90FF, #00008B); }
+
         .bg-c { background: linear-gradient(135deg, #E2E8F0, #94A3B8, #475569); }
+
         .bg-mythic { background: linear-gradient(135deg, #ff0000, #800000, #000000); }
+
         .bg-empty { background: linear-gradient(135deg, #1e293b, #0f172a); }
 
+
+
         .border-ur { border-color: #FFEA00; }
+
         .border-sr { border-color: #DDA0DD; }
+
         .border-r { border-color: #87CEFA; }
+
         .border-c { border-color: #F8FAFC; }
+
         .border-mythic { border-color: #ff0000; }
 
-        .bg-grid-pattern {
-            background-size: 30px 30px;
-            background-image: linear-gradient(to right, rgba(59, 130, 246, 0.08) 1px, transparent 1px),
-                              linear-gradient(to bottom, rgba(59, 130, 246, 0.08) 1px, transparent 1px);
+
+
+        @keyframes popUp {
+
+            0% { opacity: 0; transform: translateY(20px) scale(0.9); }
+
+            100% { opacity: 1; transform: translateY(0) scale(1); }
+
         }
-        .hide-scrollbar::-webkit-scrollbar { display: none; }
+
+        .anim-pop-up { animation: popUp 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards; }
+
+
+
+        .bg-grid-pattern {
+
+            background-size: 30px 30px;
+
+            background-image: linear-gradient(to right, rgba(59, 130, 246, 0.08) 1px, transparent 1px),
+
+                              linear-gradient(to bottom, rgba(59, 130, 246, 0.08) 1px, transparent 1px);
+
+        }
+
     </style>
+
 </head>
+
 <body class="font-sans antialiased text-slate-800 bg-slate-50 min-h-screen flex flex-col relative">
 
-    <header class="w-full z-50 bg-white/90 backdrop-blur-md border-b border-slate-200 sticky top-0 shadow-sm">
-        <div class="container mx-auto px-4 flex h-16 items-center justify-between max-w-7xl">
+
+
+<!-- Header -->
+
+    <header class="w-full z-40 bg-white/90 backdrop-blur-md border-b border-slate-200 sticky top-0 shadow-sm">
+
+        <div class="container mx-auto px-4 flex h-16 items-center justify-between max-w-6xl">
+
             <a href="/" class="flex items-center gap-2">
-                <div class='font-black text-2xl tracking-tighter'>
-                    <span class='text-primary'>&lt;</span><span class='bg-clip-text text-transparent bg-gradient-to-r from-primary to-purple-600'>IMPHNEN</span><span class='text-primary'>/&gt;</span>
-                </div>
+
+                <img src="https://imphnen.dev/logo.webp" alt="IMPHNEN Logo" class="h-8 w-auto object-contain" 
+
+                     onerror="this.onerror=null; this.outerHTML='<div class=\'font-black text-2xl tracking-tighter\'><span class=\'text-primary\'>&lt;</span><span class=\'bg-clip-text text-transparent bg-gradient-to-r from-primary to-purple-600\'>IMPHNEN</span><span class=\'text-primary\'>/&gt;</span></div>';"/>
+
             </a>
-            <div class="flex items-center gap-3">
-                <div class="hidden sm:flex items-center gap-1.5 text-[10px] font-bold text-slate-500 bg-slate-100 px-3 py-1.5 rounded-full border border-slate-200">
-                    <i data-lucide="shield-check" class="w-3.5 h-3.5 text-primary"></i> VERIFIED GACHA
-                </div>
-                <a href="https://ktik.me/login" class="inline-flex items-center justify-center px-4 py-2 bg-white border border-slate-200 rounded-full shadow-sm hover:bg-slate-50 transition-all font-bold text-xs text-slate-700">Login ktik.me</a>
+
+            <div class="flex items-center gap-1.5 text-[10px] md:text-xs font-bold text-slate-500 bg-slate-100 px-3 py-1.5 rounded-full border border-slate-200">
+
+                <i data-lucide="info" class="w-3.5 h-3.5"></i> FAN-MADE
+
             </div>
+
         </div>
+
     </header>
 
-    <main class="flex-1 flex flex-col relative overflow-hidden">
-        
-        <section class="flex-1 flex items-center justify-center relative py-12 md:py-20 w-full">
-            
-            <div class="absolute inset-0 -z-10 bg-grid-pattern"></div>
-            <div class="absolute top-1/4 -left-20 w-64 md:w-96 h-64 md:h-96 rounded-full bg-blue-400/20 blur-3xl opacity-60 pointer-events-none animate-blob"></div>
-            <div class="absolute bottom-1/4 -right-20 w-64 md:w-96 h-64 md:h-96 rounded-full bg-purple-400/20 blur-3xl opacity-60 pointer-events-none animate-blob" style="animation-delay: 2s;"></div>
 
-            <div class="container mx-auto px-4 max-w-7xl relative z-10">
-                <div class="flex flex-col lg:flex-row gap-12 lg:gap-24 items-center justify-center min-h-[600px] w-full">
+
+    <main class="flex-1 flex flex-col relative overflow-hidden">
+
+        
+
+        <section class="flex-1 flex items-center justify-center relative py-6 md:py-12 w-full">
+
+            
+
+            <div class="absolute inset-0 -z-10 bg-grid-pattern"></div>
+
+            <div class="absolute top-1/4 -left-20 w-64 md:w-96 h-64 md:h-96 rounded-full bg-blue-400/20 blur-3xl opacity-60 pointer-events-none"></div>
+
+            <div class="absolute bottom-1/4 -right-20 w-64 md:w-96 h-64 md:h-96 rounded-full bg-purple-400/20 blur-3xl opacity-60 pointer-events-none"></div>
+
+
+
+            <div class="container mx-auto px-4 max-w-6xl relative z-10">
+
+                <div class="flex flex-col lg:flex-row gap-8 lg:gap-16 items-center justify-center min-h-[600px]">
+
                     
-                    <div class="w-full lg:w-[480px] flex flex-col justify-center space-y-6">
-                        <div class="text-center lg:text-left space-y-4" id="mainTextContainer">
-                            <span id="statusBadge" class="inline-flex items-center rounded-full border border-primary/30 bg-primary/10 text-primary px-4 py-1.5 text-xs font-bold uppercase tracking-wider shadow-sm">
+
+                    <div class="w-full lg:w-1/2 flex flex-col justify-center space-y-5 pt-2 lg:pt-10">
+
+                        <div class="text-center lg:text-left space-y-3" id="mainTextContainer">
+
+                            <span id="statusBadge" class="inline-flex items-center rounded-full border border-primary/30 bg-primary/10 text-primary px-3 py-1 text-[10px] sm:text-xs font-bold uppercase tracking-wider shadow-sm">
+
                                 <span class="relative flex h-2 w-2 mr-2">
+
                                   <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-primary opacity-75"></span>
+
                                   <span class="relative inline-flex rounded-full h-2 w-2 bg-primary"></span>
+
                                 </span>
+
                                 Common = Banned
+
                             </span>
-                            <h1 id="mainTitle" class="text-4xl md:text-6xl font-black tracking-tight text-slate-900 leading-[1.1]">
+
+                            <h1 id="mainTitle" class="text-3xl md:text-5xl lg:text-6xl font-black tracking-tight text-slate-900 leading-[1.1]">
+
                                 Gacha Kasta <br/>
+
                                 <span class="bg-clip-text text-transparent bg-gradient-to-r from-primary via-blue-600 to-purple-600">
+
                                     Warga IMPHNEN
+
                                 </span>
+
                             </h1>
-                            <p id="mainDesc" class="text-slate-600 text-base md:text-lg leading-relaxed">
+
+                            <p id="mainDesc" class="text-slate-600 text-sm md:text-lg leading-relaxed max-w-lg mx-auto lg:mx-0">
+
                                 Adu hoki lu di sini! Gacha sekarang, koleksi kartunya, dan buktikan kasta lu di hadapan para beban server.
+
                             </p>
+
                         </div>
 
-                        <div id="formCard" class="bg-white/90 backdrop-blur-xl p-6 md:p-8 rounded-[2rem] shadow-2xl border border-white relative z-10 w-full">
-                            <div class="mb-6" id="inputGroup">
-                                <label for="playerName" class="block text-xs font-black text-slate-400 mb-3 uppercase tracking-[0.2em] flex items-center gap-2">
+
+
+                        <div id="formCard" class="bg-white/90 backdrop-blur-xl p-5 md:p-8 rounded-3xl shadow-2xl border border-white relative z-10 w-full max-w-lg mx-auto lg:mx-0">
+
+                            <div class="mb-5" id="inputGroup">
+
+                                <label for="playerName" class="block text-sm font-bold text-slate-700 mb-2 uppercase tracking-wide flex items-center gap-2">
+
                                     <i data-lucide="scan-line" class="w-4 h-4 text-primary"></i> Masukkan Nama Lu:
+
                                 </label>
-                                <input type="text" id="playerName" class="w-full bg-slate-50 border-2 border-slate-100 rounded-2xl py-4 px-5 text-slate-900 font-bold focus:outline-none focus:border-primary focus:ring-4 focus:ring-primary/20 transition-all text-lg shadow-inner placeholder-slate-300" placeholder="Siapa nama lu?" autocomplete="off" onkeypress="if(event.key === 'Enter') prepareGacha()">
+
+                                <input type="text" id="playerName" class="w-full bg-slate-50 border-2 border-slate-200 rounded-xl py-3 px-4 text-slate-900 font-bold focus:outline-none focus:border-primary focus:ring-4 focus:ring-primary/20 transition-all placeholder-slate-400 text-base md:text-lg shadow-inner" placeholder="Contoh: xX_Turu_Xx" autocomplete="off" onkeypress="if(event.key === 'Enter') prepareGacha()">
+
                             </div>
+
                             
-                            <button id="gachaBtn" onclick="prepareGacha()" class="w-full bg-gradient-to-r from-primary to-purple-600 hover:scale-[1.02] active:scale-[0.98] text-white font-black text-lg py-4 rounded-2xl transition-all duration-300 flex justify-center items-center gap-3 shadow-xl shadow-blue-500/25 group">
+
+                            <button id="gachaBtn" onclick="prepareGacha()" class="w-full bg-gradient-to-r from-primary to-purple-600 hover:from-blue-600 hover:to-indigo-700 text-white font-black text-base md:text-lg py-4 px-4 rounded-xl transition-all duration-300 flex justify-center items-center gap-2 shadow-[0_10px_20px_rgba(59,130,246,0.3)] hover:-translate-y-1 active:translate-y-0 active:scale-95 group">
+
                                 <span id="btnIconWrapper"><i data-lucide="zap" class="w-6 h-6 group-hover:rotate-12 transition-transform"></i></span>
+
                                 <span id="btnText">PULL KARTU SEKARANG</span>
+
                             </button>
 
-                            <div id="statsGroup" class="mt-8 grid grid-cols-2 gap-4">
-                                <div class="bg-slate-100/50 rounded-2xl p-4 text-center border border-slate-200 shadow-inner">
-                                    <p class="text-[10px] text-slate-400 font-black uppercase tracking-widest mb-1">Total Pull</p>
-                                    <p id="pullCountDisplay" class="text-2xl font-black text-slate-800">0</p>
+
+
+                            <div id="statsGroup" class="mt-6 grid grid-cols-2 gap-4">
+
+                                <div class="bg-slate-100/50 rounded-xl p-3 text-center border border-slate-200 shadow-inner">
+
+                                    <p class="text-[10px] text-slate-500 font-bold uppercase tracking-wider">Total Pull</p>
+
+                                    <p id="pullCountDisplay" class="text-xl font-black text-slate-800">0</p>
+
                                 </div>
-                                <div class="bg-blue-50/50 rounded-2xl p-4 text-center border border-blue-100 shadow-inner">
-                                    <p class="text-[10px] text-primary font-black uppercase tracking-widest mb-1">Pity (Garansi SR)</p>
-                                    <p id="pityDisplay" class="text-2xl font-black text-primary">0/10</p>
+
+                                <div class="bg-blue-50/50 rounded-xl p-3 text-center border border-blue-100 shadow-inner">
+
+                                    <p class="text-[10px] text-primary font-bold uppercase tracking-wider">Pity (Garansi SR)</p>
+
+                                    <p id="pityDisplay" class="text-xl font-black text-primary">0/10</p>
+
                                 </div>
+
                             </div>
 
-                            <div id="ratesGroup" class="mt-6 bg-slate-50 rounded-2xl p-4 border border-slate-200 shadow-inner">
-                                <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest text-center mb-3 flex items-center justify-center gap-2">
-                                    <i data-lucide="percent" class="w-3 h-3"></i> Probabilitas Kartu
+
+
+                            <div id="ratesGroup" class="mt-5 bg-slate-100 rounded-xl p-3 border border-slate-200 shadow-inner">
+
+                                <p class="text-[10px] sm:text-xs text-slate-500 font-bold uppercase tracking-wider text-center mb-2 flex items-center justify-center gap-1">
+
+                                    <i data-lucide="percent" class="w-3 h-3"></i> Rate Gacha
+
                                 </p>
-                                <div class="flex flex-wrap justify-center gap-3 text-[10px] font-black">
-                                    <span class="px-3 py-1 bg-yellow-100 text-yellow-700 rounded-lg border border-yellow-200 shadow-sm">UR: 2%</span>
-                                    <span class="px-3 py-1 bg-purple-100 text-purple-700 rounded-lg border border-purple-200 shadow-sm">SR: 8%</span>
-                                    <span class="px-3 py-1 bg-cyan-100 text-cyan-700 rounded-lg border border-cyan-200 shadow-sm">R: 30%</span>
-                                    <span class="px-3 py-1 bg-white text-slate-600 rounded-lg border border-slate-300 shadow-sm">C: 60%</span>
+
+                                <div class="flex flex-wrap justify-center gap-2 sm:gap-3 text-[10px] sm:text-xs font-bold">
+
+                                    <span class="px-2 py-1 bg-yellow-100 text-yellow-700 rounded-md border border-yellow-200 shadow-sm">UR: 2%</span>
+
+                                    <span class="px-2 py-1 bg-purple-100 text-purple-700 rounded-md border border-purple-200 shadow-sm">SR: 8%</span>
+
+                                    <span class="px-2 py-1 bg-cyan-100 text-cyan-700 rounded-md border border-cyan-200 shadow-sm">R: 30%</span>
+
+                                    <span class="px-2 py-1 bg-white text-slate-600 rounded-md border border-slate-300 shadow-sm">C: 60%</span>
+
                                 </div>
+
                             </div>
+
                         </div>
+
                     </div>
 
-                    <div class="flex flex-col items-center justify-center space-y-6 w-full lg:w-auto">
+
+
+                    <div class="w-full lg:w-1/2 flex flex-col justify-center items-center mt-6 lg:mt-0 px-2 pb-12 lg:pb-0">
+
                         
-                        <div id="cardWrapperMain" class="card-wrapper relative max-w-[320px] md:max-w-[360px] lg:w-[380px]" onclick="flipCard()">
+
+                        <div id="cardWrapperMain" class="card-wrapper relative max-w-[280px] sm:max-w-[320px] md:max-w-[340px] lg:max-w-[360px]" onclick="flipCard()">
+
+                            
+
                             <div id="cardInner" class="card-inner">
-                                <div id="cardFront" class="card-front bg-empty border-[10px] border-[#334155] overflow-hidden flex flex-col p-3">
-                                    <div class="holo-foil"></div>
-                                    <div class="h-full w-full bg-slate-900 rounded-2xl flex flex-col relative z-20 overflow-hidden shadow-inner border border-white/5">
-                                        <div class="h-12 w-full flex items-center justify-between px-4 absolute top-0 z-30 bg-gradient-to-b from-black/80 to-transparent">
+
+                                <div id="cardFront" class="card-front bg-empty border-[8px] sm:border-[10px] border-[#334155] flex flex-col p-2 sm:p-3 overflow-hidden">
+
+                                    
+
+                                    <div class="holo-foil"></div> <div class="h-full w-full bg-slate-900 rounded-[1rem] flex flex-col relative z-20 overflow-hidden shadow-inner">
+
+                                        
+
+                                        <div class="h-10 sm:h-12 w-full bg-gradient-to-r from-black/90 to-transparent flex items-center justify-between px-3 sm:px-4 z-10 absolute top-0 left-0 right-0">
+
                                             <div class="flex items-center gap-1.5">
-                                                <img src="https://imphnen.dev/logo.webp" class="h-4 opacity-80" onerror="this.style.display='none'">
-                                                <span class="text-white/30 text-[8px] font-black tracking-tighter">X</span>
-                                                <img src="https://ktik.me/logo.png" class="h-3 opacity-80" onerror="this.style.display='none'">
+
+                                                <img src="https://imphnen.dev/logo.webp" alt="IMPHNEN" class="h-4 sm:h-5 object-contain drop-shadow-[0_2px_4px_rgba(0,0,0,0.8)]" onerror="this.style.display='none'">
+
+                                                <span class="text-white/30 text-[8px] font-black">X</span>
+
+                                                <img src="https://ktik.me/logo.png" alt="ktik.me" class="h-3 sm:h-4 object-contain drop-shadow-[0_2px_4px_rgba(0,0,0,0.8)]" onerror="this.style.display='none'">
+
                                             </div>
-                                            <div class="text-right">
-                                                <p class="text-[7px] font-bold text-red-400 uppercase tracking-tighter leading-none">Kemalasan</p>
-                                                <p id="cardKemalasan" class="text-lg font-black text-white leading-none">???</p>
+
+                                            <div class="flex flex-col items-end leading-none">
+
+                                                <span class="text-[7px] sm:text-[8px] font-bold text-red-400 uppercase tracking-widest">Kemalasan</span>
+
+                                                <span id="cardKemalasan" class="text-sm sm:text-lg font-black text-white drop-shadow-md">???</span>
+
                                             </div>
+
                                         </div>
 
-                                        <div class="w-full h-[52%] relative bg-slate-800 border-b-4 border-slate-700/50 mt-10 overflow-hidden flex items-center justify-center">
+
+
+                                        <div class="w-full h-[45%] sm:h-[50%] relative bg-slate-800 border-b-4 border-slate-700/50 mt-10 sm:mt-12 overflow-hidden flex items-center justify-center group">
+
+                                            
+
                                             <div id="artPlaceholder" class="absolute inset-0 flex flex-col items-center justify-center bg-slate-900 z-10">
+
                                                 <i data-lucide="loader-2" class="w-10 h-10 text-primary animate-spin mb-2"></i>
+
+                                                <span class="text-[10px] text-slate-400 font-mono tracking-widest uppercase">LOADING...</span>
+
                                             </div>
-                                            <img id="cardImage" src="" class="absolute inset-0 w-full h-full object-cover opacity-0 transition-opacity duration-300 z-20" alt="Art" />
-                                            <div class="absolute inset-0 shadow-[inset_0_0_40px_rgba(0,0,0,0.8)] pointer-events-none z-30"></div>
+
+                                            
+
+                                            <img id="cardImage" src="" class="absolute inset-0 w-full h-full object-cover opacity-0 transition-opacity duration-300 scale-105 group-hover:scale-110 transition-transform z-20" alt="Card Art" />
+
+                                            
+
+                                            <div class="absolute inset-0 shadow-[inset_0_0_30px_rgba(0,0,0,0.8)] pointer-events-none z-30"></div>
+
                                         </div>
 
-                                        <div class="h-6 w-full bg-slate-800/80 flex items-center justify-between px-4 text-[9px] font-black text-slate-400 uppercase tracking-widest border-b border-white/5">
+
+
+                                        <div class="h-6 w-full bg-slate-800/80 flex items-center justify-between px-3 text-[8px] sm:text-[9px] font-bold text-slate-400 uppercase tracking-widest border-b border-white/5">
+
                                             <span id="cardRarityBadge">Rarity: ???</span>
+
                                             <span id="cardTypeBadge">Type: Mageran</span>
+
                                         </div>
 
-                                        <div class="flex-grow flex flex-col p-4 bg-gradient-to-b from-slate-900 to-black">
-                                            <div class="mb-2 pb-2 border-b border-white/10">
-                                                <h4 id="cardNameBadge" class="text-xl font-black text-white uppercase truncate tracking-tight">NAMA USER</h4>
-                                                <span id="cardTitle" class="text-[11px] font-bold text-primary uppercase leading-tight">MENUNGGU TAKDIR</span>
+
+
+                                        <div class="flex-grow flex flex-col p-3 sm:p-4 bg-gradient-to-b from-slate-900 to-black relative">
+
+                                            
+
+                                            <div class="flex flex-col gap-0.5 mb-2 pb-2 border-b border-white/10">
+
+                                                <h4 id="cardNameBadge" class="text-sm sm:text-base font-black text-white uppercase tracking-wide truncate drop-shadow-md w-full">
+
+                                                    NAMA USER
+
+                                                </h4>
+
+                                                <span id="cardTitle" class="text-[10px] sm:text-[11px] font-bold text-primary uppercase leading-tight">
+
+                                                    MENUNGGU KARTU
+
+                                                </span>
+
                                             </div>
-                                            <div class="flex items-start gap-3">
-                                                <div class="mt-1"><i data-lucide="swords" class="w-4 h-4 text-slate-500"></i></div>
+
+                                            
+
+                                            <div class="flex items-start gap-2">
+
+                                                <div class="mt-0.5"><i data-lucide="swords" class="w-4 h-4 text-slate-500"></i></div>
+
                                                 <div class="w-full">
-                                                    <h4 id="cardAttack" class="text-[11px] font-black text-slate-200 uppercase tracking-wide">...</h4>
-                                                    <p id="cardDesc" class="text-[10px] text-slate-400 font-medium leading-snug mt-1 italic">"Silakan masukkan nama lu dan tekan tombol Pull Kartu."</p>
+
+                                                    <h4 id="cardAttack" class="text-[10px] sm:text-[11px] font-black text-slate-200 uppercase tracking-wide">???</h4>
+
+                                                    <p id="cardDesc" class="text-[9px] sm:text-[10px] text-slate-400 font-medium leading-tight mt-1 text-justify">
+
+                                                        "Silakan masukkan nama lu dan tekan tombol Gacha untuk memanggil takdir TCG lu."
+
+                                                    </p>
+
                                                 </div>
+
                                             </div>
+
                                         </div>
 
-                                        <div class="h-7 bg-black flex items-center justify-between px-4 text-[8px] font-mono text-slate-600 mt-auto border-t border-white/10">
-                                            <span>Illus. Stock Image</span>
+                                        <div class="h-6 bg-black flex items-center justify-between px-3 text-[7px] sm:text-[8px] font-mono text-slate-600 mt-auto border-t border-white/10">
+
+                                            <span class="font-bold text-slate-500">Illus. Stock Image</span>
+
                                             <span id="randomId">ID: ####-####</span>
+
                                         </div>
+
                                     </div>
+
                                 </div>
+
+
+
                                 <div class="card-back">
-                                    <div class="absolute inset-0 bg-grid-pattern opacity-10 rounded-2xl"></div>
-                                    <div class="flex flex-col items-center justify-center relative z-10 w-full h-full p-8 border border-white/10 rounded-2xl shadow-[inset_0_0_50px_rgba(0,0,0,0.8)]">
-                                        <img src="https://imphnen.dev/logo.webp" alt="IMPHNEN" class="w-3/4 mb-6 drop-shadow-[0_0_20px_rgba(59,130,246,0.6)]" onerror="this.style.display='none'">
-                                        <span class="text-white/10 text-xs font-black mb-6 tracking-widest">X</span>
+
+                                    <div class="absolute inset-0 bg-grid-pattern opacity-10 rounded-[1rem]"></div>
+
+                                    <div class="flex flex-col items-center justify-center relative z-10 w-full h-full p-4 border border-white/10 rounded-[1rem] shadow-[inset_0_0_50px_rgba(0,0,0,0.8)]">
+
+                                        <img src="https://imphnen.dev/logo.webp" alt="IMPHNEN" class="w-3/4 mb-6 drop-shadow-[0_0_15px_rgba(59,130,246,0.6)]" onerror="this.style.display='none'">
+
+                                        <span class="text-white/20 text-xs font-black mb-6">X</span>
+
                                         <img src="https://ktik.me/logo.png" alt="ktik.me" class="w-1/2 drop-shadow-[0_0_15px_rgba(255,255,255,0.4)]" onerror="this.src='https://ktik.me/favicon.svg'">
+
                                     </div>
+
                                 </div>
+
                             </div>
+
                         </div>
 
-                        <div class="w-full flex flex-col items-center space-y-4">
-                            <p id="flipHint" class="text-[10px] font-black text-slate-400 hidden tracking-[0.2em] uppercase animate-pulse">
-                                <i data-lucide="mouse-pointer-click" class="inline w-3.5 h-3.5 mb-1"></i> Tap Kartu Untuk Flip
-                            </p>
-                            <div id="shareActionContainer" class="hidden w-full max-w-[320px] md:max-w-[360px] lg:w-[380px]">
-                                <button onclick="shareResultAPI()" class="w-full bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white text-base font-black py-4 px-4 rounded-2xl flex items-center justify-center gap-3 shadow-xl active:scale-95 transition-all border border-blue-400">
-                                    <i data-lucide="share-2" class="w-5 h-5"></i> Pamerkan Kartu Lu!
-                                </button>
-                            </div>
+
+
+                        <p id="flipHint" class="text-[10px] font-bold text-slate-400 mt-3 animate-pulse hidden tracking-widest uppercase">
+
+                            <i data-lucide="mouse-pointer-click" class="inline w-3 h-3 mb-0.5"></i> Tap kartu untuk membalik
+
+                        </p>
+
+
+
+                        <div id="shareActionContainer" class="hidden w-full max-w-[280px] sm:max-w-[320px] md:max-w-[340px] lg:max-w-[360px] mt-4">
+
+                            <button onclick="shareResultAPI()" class="w-full bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white text-sm sm:text-base font-black py-3 sm:py-4 px-4 rounded-2xl flex items-center justify-center gap-3 shadow-[0_10px_20px_rgba(59,130,246,0.3)] transition-all active:scale-95 border border-blue-400">
+
+                                <i data-lucide="share-2" class="w-5 h-5"></i> Pamerkan Kartu Lu!
+
+                            </button>
+
                         </div>
+
                         
+
                     </div>
+
                 </div>
 
-                <div class="mt-32 px-4">
-                    <div class="flex items-center gap-4 mb-10">
+
+
+                <div class="mt-20 px-4">
+
+                    <div class="flex items-center gap-4 mb-8">
+
                         <div class="h-px flex-1 bg-slate-200"></div>
-                        <h2 class="text-xs font-black text-slate-400 uppercase tracking-[0.3em]">Koleksi Kartu Lu</h2>
+
+                        <h2 class="text-sm font-black text-slate-400 uppercase tracking-widest">Koleksi Kartu Lu</h2>
+
                         <div class="h-px flex-1 bg-slate-200"></div>
+
                     </div>
-                    <div id="collectionGrid" class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-6">
+
+                    <div id="collectionGrid" class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4">
+
                         </div>
+
                 </div>
 
+
+
             </div>
+
         </section>
 
-        <section class="w-full bg-gradient-to-br from-slate-900 via-indigo-950 to-slate-900 py-20 relative overflow-hidden border-t border-slate-800">
-            <div class="absolute top-0 right-0 -translate-y-1/2 translate-x-1/3 w-96 h-96 bg-cyan-400/20 blur-[100px] rounded-full pointer-events-none animate-blob"></div>
-            <div class="absolute bottom-0 left-0 translate-y-1/2 -translate-x-1/3 w-96 h-96 bg-purple-600/20 blur-[100px] rounded-full pointer-events-none animate-blob" style="animation-delay: 4s;"></div>
-            
-            <div class="container mx-auto px-4 max-w-4xl relative z-10 text-center">
-                <div class="inline-flex items-center gap-1.5 px-4 py-1.5 rounded-full bg-white/5 border border-white/10 text-white text-[10px] font-bold uppercase tracking-widest mb-8 backdrop-blur-sm">
-                    <i data-lucide="star" class="w-3.5 h-3.5 text-yellow-400 animate-pulse"></i> SPONSORED BY KTIK.ME
-                </div>
-                
-                <h2 class="text-4xl sm:text-6xl font-black text-white mb-6 leading-tight tracking-tight">
-                    Satu Nama Untuk <br class="sm:hidden" />
-                    <span class="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 via-blue-400 to-purple-400">Sejuta Karya Mu</span>
-                </h2>
-                
-                <p class="text-slate-300 text-base md:text-xl mb-12 max-w-2xl mx-auto leading-relaxed font-medium">
-                    Di <b>ktik.me</b>, Kamu bisa dapet <b>Subdomain Gratis</b> untuk alamat web personal, halaman <b>Link in Bio</b> untuk pamerin semua sosmed & karya, serta fitur <b>Shortlink</b> biar link lu makin ringkas dan rapi.
-                </p>
-                
-                <a href="https://ktik.me/" target="_blank" rel="noopener noreferrer" 
-                   class="inline-flex items-center justify-center gap-3 px-10 py-5 rounded-full bg-white text-indigo-950 font-black text-lg transition-all duration-300 hover:scale-105 hover:bg-slate-50 hover:shadow-[0_0_30px_rgba(255,255,255,0.3)] active:scale-95 group">
-                    Coba ktik.me Sekarang
-                    <i data-lucide="arrow-right" class="w-6 h-6 group-hover:translate-x-1 transition-transform"></i>
-                </a>
-            </div>
-        </section>
+
+
+        <section class="w-full bg-gradient-to-br from-slate-900 via-indigo-950 to-slate-900 py-16 relative overflow-hidden border-t border-slate-800">
+
+    <div class="absolute top-0 right-0 -translate-y-1/2 translate-x-1/3 w-96 h-96 bg-cyan-400/20 blur-[100px] rounded-full pointer-events-none"></div>
+
+    <div class="absolute bottom-0 left-0 translate-y-1/2 -translate-x-1/3 w-96 h-96 bg-purple-600/20 blur-[100px] rounded-full pointer-events-none"></div>
+
+    
+
+    <div class="container mx-auto px-4 max-w-4xl relative z-10 text-center">
+
+        <h2 class="text-3xl sm:text-4xl md:text-5xl font-black text-white mb-4 leading-tight tracking-tight">
+
+            Klaim <br class="sm:hidden" />
+
+            <span class="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 via-blue-400 to-purple-400">Subdomain Gratis</span>-mu Sekarang!
+
+        </h2>
+
+        
+
+        <p class="text-slate-300 text-sm sm:text-base md:text-lg mb-8 max-w-2xl mx-auto leading-relaxed">
+
+            Di <b>ktik.me</b>, Kamu bisa dapet <b>Subdomain Gratis</b> untuk alamat web personal, halaman <b>Link in Bio</b> untuk pamerin semua sosmed & karya, serta fitur <b>Shortlink</b> biar link lu makin ringkas dan rapi.
+
+        </p>
+
+        
+
+        <a href="https://ktik.me/" target="_blank" rel="noopener noreferrer" 
+
+           class="inline-flex items-center justify-center gap-2 px-8 py-4 rounded-full bg-white text-indigo-950 font-black text-sm sm:text-base transition-all duration-300 hover:scale-105 hover:bg-slate-50 hover:shadow-[0_0_30px_rgba(255,255,255,0.3)] active:scale-95 group">
+
+            Coba Sekarang
+
+            <i data-lucide="arrow-right" class="w-5 h-5 group-hover:translate-x-1 transition-transform"></i>
+
+        </a>
+
+    </div>
+
+</section>
+
+
 
     </main>
 
-    <footer class="w-full py-8 bg-white border-t border-slate-200 relative z-40">
-        <div class="container mx-auto px-4 flex flex-col md:flex-row items-center justify-between gap-4 text-center md:text-left">
-            <div>
-                <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest">© 2026 Simulator Gacha Kasta</p>
-                <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Project by Dahono Consulting Agency</p>
-            </div>
-            <div class="flex items-center gap-4">
-                <a href="https://ktik.me" target="_blank" class="text-xs font-black text-slate-600 hover:text-primary transition-colors flex items-center gap-1.5 uppercase tracking-widest">
-                    <i data-lucide="zap" class="w-4 h-4 text-primary fill-current"></i> Powered by ktik.me
-                </a>
-            </div>
+
+
+    <footer class="w-full py-5 sm:py-6 bg-white border-t border-slate-200 relative z-40">
+
+        <div class="container mx-auto px-4 flex flex-col md:flex-row items-center justify-between gap-3 text-center md:text-left">
+
+            <p class="text-[10px] sm:text-xs font-semibold text-slate-500">
+
+                © 2026 Fan-made IMPHNEN Gacha.
+
+            </p>
+
+            <p class="text-xs font-bold text-slate-600 flex items-center justify-center md:justify-start gap-1">
+
+                Powered by <a href="https://ktik.me" target="_blank" rel="noopener noreferrer" class="text-primary hover:text-purple-600 hover:underline transition-colors flex items-center gap-1">ktik.me</a>
+
+            </p>
+
         </div>
+
     </footer>
 
+
+
     <script>
+
         lucide.createIcons();
 
-        // DATABASE GACHA - 26 KARTU (Cukup untuk 700+ line)
+
+
         const gachaData = [
-            // ULTRA RARE (UR) - 4
+
+            // ================= ULTRA RARE (UR) - 4 KARTU =================
+
             { id: "U1", rarity: "UR", title: "CEO of Turu", type: "Dewa Tidur", attack: "Sleep Coding", kemalasan: "999%", desc: "Ngoding cukup lewat mimpi. Begitu bangun, tiba-tiba project udah siap deploy ke production tanpa ada bug sedikitpun.", image: "https://images.unsplash.com/photo-1531104985437-602d73aaab64?q=80&w=400" },
-            { id: "U2", rarity: "UR", title: "Duta Semicolon", type: "Cenayang", attack: "Firasat Batin", kemalasan: "850%", desc: "Tidak butuh linter. Punya indera keenam yang ajaib untuk menemukan titik koma yang hilang di dalam jutaan baris kode.", image: "https://images.unsplash.com/photo-1555066931-4365d14bab8c?q=80&w=400" },
+
+            { id: "U2", rarity: "UR", title: "Duta Semicolon", type: "Cenayang Code", attack: "Firasat Batin", kemalasan: "850%", desc: "Tidak butuh linter. Punya indera keenam yang ajaib untuk menemukan titik koma yang hilang di dalam jutaan baris kode.", image: "https://images.unsplash.com/photo-1555066931-4365d14bab8c?q=80&w=400" },
+
             { id: "U3", rarity: "UR", title: "Lord of Prod.", type: "Madlad", attack: "Friday Push", kemalasan: "1000%", desc: "Nge-push kode langsung ke main branch pas hari Jumat sore jam 5. Kalau server tiba-tiba down, dia pura-pura pindah kewarganegaraan.", image: "https://images.unsplash.com/photo-1614064641913-a530a504639b?q=80&w=400" },
+
             { id: "U4", rarity: "UR", title: "Fullstack Wizard", type: "Penyihir", attack: "One Man Army", kemalasan: "900%", desc: "Ngerjain Frontend, Backend, UI/UX, sampe DevOps sendirian. Saking jagonya, dia lupa caranya mandi dan bersosialisasi.", image: "https://images.unsplash.com/photo-1550439062-609e1531270e?q=80&w=400" },
 
-            // SUPER RARE (SR) - 4
+
+
+            // ================= SUPER RARE (SR) - 4 KARTU =================
+
             { id: "S1", rarity: "SR", title: "Prompt Engineer", type: "AI Whisperer", attack: "AI Manipulator", kemalasan: "500%", desc: "Sangat jago merangkai kata untuk menyuruh ChatGPT. Saking jagonya, AI-nya sampai menangis terharu melihat prompt-nya.", image: "https://images.unsplash.com/photo-1620712943543-bcc4688e7485?q=80&w=400" },
+
             { id: "S2", rarity: "SR", title: "Stack Overflow Ninja", type: "Jalan Ninja", attack: "Ctrl+C Ctrl+V", kemalasan: "480%", desc: "Tidak pernah nulis kode dari nol. Hafal di luar kepala kombinasi sakti Ctrl+C dan Ctrl+V. StackOverflow adalah kitab sucinya.", image: "https://images.unsplash.com/photo-1555099962-4199c345e5dd?q=80&w=400" },
+
             { id: "S3", rarity: "SR", title: "Arch Linux Enjoyer", type: "Terminal Wibu", attack: "Terminal Rice", kemalasan: "550%", desc: "Menghabiskan waktu 5 jam tiap hari cuma buat ganti tema terminal Linux. Giliran disuruh ngerjain tugas malah ketiduran.", image: "https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?q=80&w=400" },
+
             { id: "S4", rarity: "SR", title: "Bug Hunter", type: "Detektif", attack: "Print Debug", kemalasan: "400%", desc: "Mencari bug selama 3 hari, ternyata cuma karena typo nama variabel. Akhirnya dia pensiun dan buka ternak lele.", image: "https://images.unsplash.com/photo-1516259762381-22954d7d3ad2?q=80&w=400" },
 
-            // RARE (R) - 9
-            { id: "R1", rarity: "R", title: "Inspect Element", type: "Hacker Gadungan", attack: "Fake Rich", kemalasan: "200%", desc: "Kemampuan codingnya sebatas Inspect Element, ganti saldo bank jadi miliaran, lalu di-screenshot buat pamer di grup.", image: "https://images.unsplash.com/photo-1526304640581-d334cdbbf45e?q=80&w=400" },
-            { id: "R2", rarity: "R", title: "Dark Mode Cultist", type: "Vampir Digital", attack: "Vampire Sight", kemalasan: "250%", desc: "Matanya akan langsung memerah dan iritasi parah jika tidak sengaja melihat IDE yang berwarna putih terang.", image: "https://images.unsplash.com/photo-1550751827-4bd374c3f58b?q=80&w=400" },
-            { id: "R3", rarity: "R", title: "Tutorial Hell", type: "Penonton Setia", attack: "Endless Watch", kemalasan: "150%", desc: "Sudah mengkhatamkan ratusan jam video tutorial, tapi belum punya satupun portofolio yang beneran jalan.", image: "https://images.unsplash.com/photo-1461749280684-dccba630e2f6?q=80&w=400" },
-            { id: "R4", rarity: "R", title: "Framework Hopper", type: "Si Labil", attack: "Re-init Project", kemalasan: "210%", desc: "Ganti framework tiap minggu. Hari ini React, besok Vue, lusa Svelte. Hasilnya? Gak ada yang jadi.", image: "https://images.unsplash.com/photo-1517694712202-14dd9538aa97?q=80&w=400" },
-            { id: "R5", rarity: "R", title: "Coffee Driven Dev", type: "Pecandu", attack: "Overdose", kemalasan: "180%", desc: "Mesin pengolah kafein menjadi kode program. Tanpa kopi, otaknya cuma bisa ngeluarin error 404.", image: "https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?q=80&w=400" },
-            { id: "R6", rarity: "R", title: "Commit 'Fix' Man", type: "Lazy Committer", attack: "Spam Commit", kemalasan: "230%", desc: "Pesan commit-nya selalu 'Fix', 'Fix bug'. Padahal yang diubah cuma spasi doang.", image: "https://images.unsplash.com/photo-1556075798-4825dfaaf498?q=80&w=400" },
-            { id: "R7", rarity: "R", title: "Windows Enjoyer", type: "Mas-mas IT", attack: "Blue Screen", kemalasan: "200%", desc: "Coding di Windows itu tantangan. Tantangan buat nggak emosi pas ngelihat loading update tiba-tiba.", image: "https://images.unsplash.com/photo-1593344484962-996055d4939a?q=80&w=400" },
-            { id: "R8", rarity: "R", title: "Tab Obsessive", type: "Ram Eater", attack: "Memory Leak", kemalasan: "190%", desc: "Buka 50 tab Chrome buat nyari satu solusi. Begitu dapet, laptopnya langsung meledak kena mental.", image: "https://images.unsplash.com/photo-1551033406-611cf9a28f67?q=80&w=400" },
-            { id: "R9", rarity: "R", title: "GitHub Ghost", type: "Lurker", attack: "Silent Fork", kemalasan: "100%", desc: "Akun GitHub penuh dengan fork repo orang, tapi gak pernah punya repo buatan sendiri.", image: "https://images.unsplash.com/photo-1618401471353-b98aadebc255?q=80&w=400" },
 
-            // COMMON (C) - 9
+
+            // ================= RARE (R) - 8 KARTU =================
+
+            { id: "R1", rarity: "R", title: "Inspect Element", type: "Hacker Gadungan", attack: "Fake Rich", kemalasan: "200%", desc: "Kemampuan codingnya sebatas Inspect Element, ganti saldo bank jadi miliaran, lalu di-screenshot buat pamer di grup.", image: "https://images.unsplash.com/photo-1526304640581-d334cdbbf45e?q=80&w=400" },
+
+            { id: "R2", rarity: "R", title: "Dark Mode Cultist", type: "Vampir Digital", attack: "Vampire Sight", kemalasan: "250%", desc: "Matanya akan langsung memerah dan iritasi parah jika tidak sengaja melihat IDE yang berwarna putih terang.", image: "https://images.unsplash.com/photo-1550751827-4bd374c3f58b?q=80&w=400" },
+
+            { id: "R3", rarity: "R", title: "Tutorial Hell", type: "Penonton Setia", attack: "Endless Watch", kemalasan: "150%", desc: "Sudah mengkhatamkan ratusan jam video tutorial, tapi belum punya satupun portofolio yang beneran jalan.", image: "https://images.unsplash.com/photo-1461749280684-dccba630e2f6?q=80&w=400" },
+
+            { id: "R4", rarity: "R", title: "Framework Hopper", type: "Si Labil", attack: "Re-init Project", kemalasan: "210%", desc: "Ganti framework tiap minggu. Hari ini React, besok Vue, lusa Svelte. Hasilnya? Gak ada yang jadi.", image: "https://images.unsplash.com/photo-1517694712202-14dd9538aa97?q=80&w=400" },
+
+            { id: "R5", rarity: "R", title: "Coffee Driven Dev", type: "Pecandu", attack: "Overdose", kemalasan: "180%", desc: "Mesin pengolah kafein menjadi kode program. Tanpa kopi, otaknya cuma bisa ngeluarin error 404.", image: "https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?q=80&w=400" },
+
+            { id: "R6", rarity: "R", title: "Commit 'Fix' Man", type: "Lazy Committer", attack: "Spam Commit", kemalasan: "230%", desc: "Pesan commit-nya selalu 'Fix', 'Fix bug', 'Fix beneran'. Padahal yang diubah cuma spasi doang.", image: "https://images.unsplash.com/photo-1556075798-4825dfaaf498?q=80&w=400" },
+
+            { id: "R7", rarity: "R", title: "Windows Enjoyer", type: "Mas-mas IT", attack: "Blue Screen", kemalasan: "200%", desc: "Coding di Windows itu tantangan. Tantangan buat nggak emosi pas ngelihat loading update tiba-tiba.", image: "https://images.unsplash.com/photo-1593344484962-996055d4939a?q=80&w=400" },
+
+            { id: "R8", rarity: "R", title: "Tab Obsessive", type: "Ram Eater", attack: "Memory Leak", kemalasan: "190%", desc: "Buka 50 tab Chrome buat nyari satu solusi. Begitu dapet, laptopnya langsung meledak kena mental.", image: "https://images.unsplash.com/photo-1551033406-611cf9a28f67?q=80&w=400" },
+
+
+
+            // ================= COMMON (C) - 9 KARTU =================
+
             { id: "C1", rarity: "C", title: "Junior Mageran", type: "Kaum Rebahan", attack: "VS Code Load", kemalasan: "90%", desc: "Baru melihat animasi loading VS Code saja energinya langsung terkuras habis. Niat ngoding besok saja.", image: "https://images.unsplash.com/photo-1498050108023-c5249f4df085?q=80&w=400" },
+
             { id: "C2", rarity: "C", title: "Mahasiswa Smt 14", type: "Beban Kampus", attack: "Pasrah", kemalasan: "99%", desc: "Skripsi baru ACC judul setelah bertahun-tahun. Sekarang kerjaannya cuma pasrah nunggu keajaiban.", image: "https://images.unsplash.com/photo-1434030216411-0b793f4b4173?q=80&w=400" },
+
             { id: "C3", rarity: "C", title: "HTML Programmer", type: "Pemula Abadi", attack: "Hello World", kemalasan: "50%", desc: "Berhasil nyetak teks tebal pake tag HTML. Langsung ngerasa udah bisa nge-hack NASA.", image: "https://images.unsplash.com/photo-1542831371-29b0f74f9713?q=80&w=400" },
+
             { id: "C4", rarity: "C", title: "Typo King", type: "Jari Kepeleset", attack: "Syntax Error", kemalasan: "40%", desc: "Niatnya ngetik 'function', keluarnya 'fuction'. Habis satu jam cuma buat nyari typo.", image: "https://images.unsplash.com/photo-1510915361894-db8b60106cb1?q=80&w=400" },
+
             { id: "C5", rarity: "C", title: "Restart Specialist", type: "IT Support", attack: "Turn Off/On", kemalasan: "70%", desc: "Solusi utama buat semua masalah: 'Udah coba di-restart belum?'. Berhasil 90% di luar logika.", image: "https://images.unsplash.com/photo-1551434678-e076c223a692?q=80&w=400" },
-            { id: "C6", rarity: "C", title: "Localhost Pro", type: "Anti Deploy", attack: "Works On My Machine", kemalasan: "85%", desc: "Di laptop gue jalan kok bang. Begitu di-deploy ke server, langsung meledak nggak karuan.", image: "https://images.unsplash.com/photo-1558494949-ef010cbdcc51?q=80&w=400" },
+
+            { id: "C6", rarity: "C", title: "Localhost Pro", type: "Anti Deploy", attack: "It Works On My Machine", kemalasan: "85%", desc: "Di laptop gue jalan kok bang. Begitu di-deploy ke server, langsung meledak nggak karuan.", image: "https://images.unsplash.com/photo-1558494949-ef010cbdcc51?q=80&w=400" },
+
             { id: "C7", rarity: "C", title: "Endless Scroller", type: "Tukang Scroll", attack: "Doom Scrolling", kemalasan: "95%", desc: "Niatnya riset di dokumentasi, eh malah nyasar scroll reels kucing sampe subuh.", image: "https://images.unsplash.com/photo-1512428559087-560fa5ceab42?q=80&w=400" },
+
             { id: "C8", rarity: "C", title: "Battery Low Man", type: "Si Pelupa", attack: "Blackout", kemalasan: "60%", desc: "Lagi asik ngoding lupa colok charger. Begitu mati, kodenya belum di-save. Innalillahi.", image: "https://images.unsplash.com/photo-1585435557343-3b092031a831?q=80&w=400" },
+
             { id: "C9", rarity: "C", title: "Dark Theme Hater", type: "Psikopat", attack: "Flashbang", kemalasan: "30%", desc: "Pake tema putih terang benderang di jam 2 malem. Merusak mata sendiri dan orang sekitar.", image: "https://images.unsplash.com/photo-1547082299-de196ea013d6?q=80&w=400" }
+
         ];
 
+
+
         let pullCount = 0;
+
         let commonStreak = 0;
+
         let isRolling = false;
+
         let scrambleInterval;
+
         let currentShareData = null; 
 
-        // LocalStorage logic
+
+
+        // LocalStorage Initialization
+
         let myCollection = JSON.parse(localStorage.getItem('imphnen_collection')) || [];
 
+
+
         document.addEventListener("DOMContentLoaded", () => {
+
             renderCollection();
+
             checkShareLink();
+
         });
 
-        function renderCollection() {
-            const grid = document.getElementById('collectionGrid');
-            grid.innerHTML = myCollection.map(c => `
-                <div class="bg-white p-3 rounded-xl border border-slate-100 shadow-sm hover:shadow-md transition-all">
-                    <div class="flex justify-between items-start mb-2">
-                        <span class="text-[8px] font-black px-2 py-0.5 rounded bg-slate-900 text-white">${c.rarity}</span>
-                        <span class="text-[8px] text-slate-400 font-mono">${c.id}</span>
-                    </div>
-                    <p class="text-[10px] font-black truncate">${c.name}</p>
-                    <p class="text-[8px] text-primary font-bold uppercase">${c.title}</p>
-                </div>
-            `).join('');
-        }
 
-        function checkShareLink() {
-            const urlParams = new URLSearchParams(window.location.search);
-            const shareCode = urlParams.get('r');
-            if (shareCode) {
-                try {
-                    const decoded = JSON.parse(decodeURIComponent(escape(atob(shareCode))));
-                    document.getElementById('statusBadge').innerHTML = `👀 Mengintip Kartu Seseorang`;
-                    document.getElementById('mainTitle').innerHTML = `Kartu Gacha <br/> <span class="bg-clip-text text-transparent bg-gradient-to-r from-primary via-blue-600 to-purple-600">si ${decoded.n}</span>`;
-                    document.getElementById('inputGroup').classList.add('hidden');
-                    const btn = document.getElementById('gachaBtn');
-                    document.getElementById('btnText').innerText = `TES HOKI LU SENDIRI!`;
-                    btn.onclick = () => { window.location.href = window.location.pathname; };
-                    renderCardBypass(decoded.n, decoded.id, decoded.pull);
-                } catch (e) { console.log("Link error."); }
-            }
-        }
-
-        function renderCardBypass(playerName, cardId, pullId) {
-            let item = gachaData.find(x => x.id === cardId) || gachaData[gachaData.length-1];
-            updateCardUI(playerName, item, pullId);
-            document.getElementById('shareActionContainer').classList.remove('hidden');
-            document.getElementById('flipHint').classList.remove('hidden');
-        }
 
         function flipCard() {
+
             if (isRolling) return;
-            document.getElementById('cardInner').classList.toggle('is-flipped');
+
+            const cardInner = document.getElementById('cardInner');
+
+            if (cardInner) cardInner.classList.toggle('is-flipped');
+
         }
 
-        function prepareGacha() {
-            if (isRolling) return;
-            const nameInput = document.getElementById('playerName').value.trim();
-            if (!nameInput) {
-                const el = document.getElementById('playerName');
-                el.classList.add('border-red-500');
-                setTimeout(() => el.classList.remove('border-red-500'), 500);
-                el.focus();
-                return;
-            }
 
-            isRolling = true;
-            document.getElementById('cardInner').classList.remove('is-flipped');
-            document.getElementById('flipHint').classList.add('hidden');
-            document.getElementById('shareActionContainer').classList.add('hidden');
-            document.getElementById('gachaBtn').disabled = true;
-            document.getElementById('btnText').innerText = `MENGUNDI TAKDIR...`;
-            document.getElementById('btnIconWrapper').innerHTML = `<i data-lucide="loader-2" class="w-6 h-6 animate-spin"></i>`;
-            document.getElementById('cardWrapperMain').classList.add('anim-rolling');
+
+        function resetGachaUI() {
+
+            try {
+
+                isRolling = false;
+
+                clearInterval(scrambleInterval);
+
+                const btn = document.getElementById('gachaBtn');
+
+                if(btn) {
+
+                    document.getElementById('btnText').innerText = `PULL KARTU SEKARANG`;
+
+                    document.getElementById('btnIconWrapper').innerHTML = `<i data-lucide="zap" class="w-6 h-6"></i>`;
+
+                    btn.classList.remove('opacity-80', 'cursor-not-allowed');
+
+                    btn.disabled = false;
+
+                }
+
+                const wrapper = document.getElementById('cardWrapperMain');
+
+                if(wrapper) wrapper.classList.remove('anim-rolling');
+
+                lucide.createIcons();
+
+            } catch(e) { console.error("Reset Error", e); }
+
+        }
+
+
+
+        function checkShareLink() {
+
+            const urlParams = new URLSearchParams(window.location.search);
+
+            const shareCode = urlParams.get('r');
+
             
-            scrambleInterval = setInterval(() => {
-                const chars = '!@#$%^&*';
-                document.getElementById('cardAttack').innerText = Array(8).fill(0).map(()=>chars[Math.floor(Math.random()*chars.length)]).join('');
-            }, 50);
 
-            setTimeout(() => finishReveal(nameInput), 1500);
+            if (shareCode) {
+
+                try {
+
+                    const decoded = JSON.parse(decodeURIComponent(escape(atob(shareCode))));
+
+                    document.getElementById('statusBadge').innerHTML = `👀 Mengintip Kartu Seseorang`;
+
+                    document.getElementById('mainTitle').innerHTML = `Kartu Gacha <br/> <span class="bg-clip-text text-transparent bg-gradient-to-r from-primary via-blue-600 to-purple-600">si ${decoded.n}</span>`;
+
+                    document.getElementById('mainDesc').innerText = "Apakah lu bisa dapet kartu yang lebih langka dari dia? Adu hoki lu sekarang!";
+
+                    
+
+                    document.getElementById('inputGroup').classList.add('hidden');
+
+                    
+
+                    const btn = document.getElementById('gachaBtn');
+
+                    document.getElementById('btnText').innerText = `TES HOKI LU SENDIRI!`;
+
+                    document.getElementById('btnIconWrapper').innerHTML = `<i data-lucide="dices" class="w-6 h-6 animate-bounce"></i>`;
+
+                    btn.onclick = () => { window.location.href = window.location.pathname; };
+
+
+
+                    renderCardBypass(decoded.n, decoded.id, decoded.pull);
+
+                } catch (error) { console.log("Invalid share link."); }
+
+            }
+
         }
 
-        function finishReveal(playerName) {
-            pullCount++;
-            clearInterval(scrambleInterval);
-            let resultItem;
-            const rand = Math.random() * 100;
 
-            if (commonStreak >= 10) {
-                const srPool = gachaData.filter(x => x.rarity === "SR");
-                resultItem = srPool[Math.floor(Math.random() * srPool.length)];
-                commonStreak = 0;
-            } else {
-                if (rand <= 2) { resultItem = gachaData.filter(x => x.rarity === "UR")[Math.floor(Math.random()*4)]; commonStreak = 0; }
-                else if (rand <= 10) { resultItem = gachaData.filter(x => x.rarity === "SR")[Math.floor(Math.random()*4)]; commonStreak = 0; }
-                else if (rand <= 40) { resultItem = gachaData.filter(x => x.rarity === "R")[Math.floor(Math.random()*9)]; commonStreak = 0; }
-                else { resultItem = gachaData.filter(x => x.rarity === "C")[Math.floor(Math.random()*9)]; commonStreak++; }
-            }
 
-            const pullId = Math.random().toString(36).substring(2, 6).toUpperCase() + "-" + Math.random().toString(36).substring(2, 6).toUpperCase();
-            updateCardUI(playerName, resultItem, pullId);
-            saveToCollection(playerName, resultItem, pullId);
+        function renderCardBypass(playerName, cardId, pullId) {
 
-            if (resultItem.rarity === "UR" || resultItem.rarity === "SR") {
-                confetti({ particleCount: 150, spread: 70, origin: { y: 0.6 } });
-            }
+            let item = gachaData.find(x => x.id === cardId) || gachaData[gachaData.length-1];
+
+            updateCardUI(playerName, item, pullId);
 
             document.getElementById('shareActionContainer').classList.remove('hidden');
+
             document.getElementById('flipHint').classList.remove('hidden');
-            lucide.createIcons();
+
         }
+
+
+
+        function prepareGacha() {
+
+            if (isRolling) return;
+
+            
+
+            const nameInput = document.getElementById('playerName').value.trim();
+
+            if (!nameInput) {
+
+                const inputEl = document.getElementById('playerName');
+
+                inputEl.classList.add('border-red-500', 'translate-x-1');
+
+                setTimeout(() => inputEl.classList.remove('border-red-500', 'translate-x-1'), 300);
+
+                inputEl.focus();
+
+                return;
+
+            }
+
+
+
+            isRolling = true;
+
+            document.getElementById('cardInner').classList.remove('is-flipped');
+
+            document.getElementById('flipHint').classList.add('hidden');
+
+            document.getElementById('shareActionContainer').classList.add('hidden');
+
+
+
+            const btn = document.getElementById('gachaBtn');
+
+            btn.disabled = true;
+
+            document.getElementById('btnText').innerText = `MENGUNDI TAKDIR...`;
+
+            document.getElementById('btnIconWrapper').innerHTML = `<i data-lucide="loader-2" class="w-6 h-6 animate-spin"></i>`;
+
+            btn.classList.add('opacity-80', 'cursor-not-allowed');
+
+            
+
+            const wrapper = document.getElementById('cardWrapperMain');
+
+            wrapper.classList.add('anim-rolling');
+
+            
+
+            // Scramble animation
+
+            scrambleInterval = setInterval(() => {
+
+                const chars = '!@#$%^&*01';
+
+                document.getElementById('cardAttack').innerText = Array(8).fill(0).map(()=>chars[Math.floor(Math.random()*chars.length)]).join('');
+
+            }, 50);
+
+
+
+            setTimeout(() => finishReveal(nameInput), 1500);
+
+        }
+
+
+
+        function finishReveal(playerName) {
+
+            pullCount++;
+
+            clearInterval(scrambleInterval);
+
+            
+
+            let resultItem;
+
+            const rand = Math.random() * 100;
+
+
+
+            if (commonStreak >= 10) {
+
+                const srPool = gachaData.filter(x => x.rarity === "SR");
+
+                resultItem = srPool[Math.floor(Math.random() * srPool.length)];
+
+                commonStreak = 0;
+
+            } else {
+
+                if (rand <= 2) { resultItem = gachaData.filter(x => x.rarity === "UR")[Math.floor(Math.random()*3)]; commonStreak = 0; }
+
+                else if (rand <= 10) { resultItem = gachaData.filter(x => x.rarity === "SR")[Math.floor(Math.random()*3)]; commonStreak = 0; }
+
+                else if (rand <= 40) { resultItem = gachaData.filter(x => x.rarity === "R")[Math.floor(Math.random()*3)]; commonStreak = 0; }
+
+                else { resultItem = gachaData.filter(x => x.rarity === "C")[Math.floor(Math.random()*3)]; commonStreak++; }
+
+            }
+
+
+
+            const pullId = Math.random().toString(36).substring(2, 6).toUpperCase() + "-" + Math.random().toString(36).substring(2, 6).toUpperCase();
+
+            
+
+            updateCardUI(playerName, resultItem, pullId);
+
+            saveToCollection(playerName, resultItem, pullId);
+
+
+
+            // Confetti
+
+            if (resultItem.rarity === "UR" || resultItem.rarity === "SR") {
+
+                confetti({ particleCount: 150, spread: 70, origin: { y: 0.6 } });
+
+            }
+
+
+
+            document.getElementById('shareActionContainer').classList.remove('hidden');
+
+            document.getElementById('flipHint').classList.remove('hidden');
+
+            lucide.createIcons();
+
+        }
+
+
 
         function updateCardUI(playerName, item, pullId) {
+
             currentShareData = { n: playerName, id: item.id, pull: pullId };
+
+            
+
             document.getElementById('cardNameBadge').innerText = playerName;
+
             document.getElementById('cardKemalasan').innerText = item.kemalasan;
+
             document.getElementById('cardTitle').innerText = item.title;
+
             document.getElementById('cardAttack').innerText = item.attack;
+
             document.getElementById('cardDesc').innerText = item.desc;
+
             document.getElementById('randomId').innerText = `ID: ${pullId}`;
+
             document.getElementById('cardTypeBadge').innerText = `Type: ${item.type}`;
+
             document.getElementById('pullCountDisplay').innerText = pullCount;
+
             document.getElementById('pityDisplay').innerText = `${commonStreak}/10`;
 
+
+
             const cardFront = document.getElementById('cardFront');
-            cardFront.className = `card-front border-[10px] overflow-hidden flex flex-col p-3 bg-${item.rarity.toLowerCase()} border-${item.rarity.toLowerCase()}`;
+
+            cardFront.className = `card-front border-[8px] sm:border-[10px] overflow-hidden flex flex-col p-2 sm:p-3 bg-${item.rarity.toLowerCase()} border-${item.rarity.toLowerCase()}`;
+
             document.getElementById('cardRarityBadge').innerText = `Rarity: ${item.rarity}`;
 
+
+
             const img = document.getElementById('cardImage');
+
             const placeholder = document.getElementById('artPlaceholder');
+
             img.src = item.image;
+
             img.onload = () => { img.classList.replace('opacity-0', 'opacity-100'); placeholder.classList.add('hidden'); };
+
             
-            isRolling = false;
-            const btn = document.getElementById('gachaBtn');
-            btn.disabled = false;
-            document.getElementById('btnText').innerText = `PULL KARTU LAGI`;
-            document.getElementById('btnIconWrapper').innerHTML = `<i data-lucide="zap" class="w-6 h-6"></i>`;
-            document.getElementById('cardWrapperMain').classList.remove('anim-rolling');
+
+            resetGachaUI();
+
             cardFront.classList.add('shine-effect');
+
         }
+
+
 
         function saveToCollection(name, item, pullId) {
-            myCollection.unshift({ name, rarity: item.rarity, title: item.title, id: pullId });
+
+            const entry = { name, rarity: item.rarity, title: item.title, id: pullId, date: new Date().toLocaleDateString() };
+
+            myCollection.unshift(entry);
+
             if(myCollection.length > 12) myCollection.pop();
+
             localStorage.setItem('imphnen_collection', JSON.stringify(myCollection));
+
             renderCollection();
+
         }
 
-        function shareResultAPI() {
-            if(!currentShareData) return;
-            const encoded = btoa(unescape(encodeURIComponent(JSON.stringify(currentShareData))));
-            const url = window.location.origin + window.location.pathname + "?r=" + encoded;
-            if (navigator.share) {
-                navigator.share({ title: 'Gacha Kasta IMPHNEN', url: url });
-            } else {
-                navigator.clipboard.writeText(url);
-                alert("Link Pamer Berhasil Disalin!");
-            }
+
+
+        function renderCollection() {
+
+            const grid = document.getElementById('collectionGrid');
+
+            grid.innerHTML = myCollection.map(c => `
+
+                <div class="bg-white p-3 rounded-xl border border-slate-100 shadow-sm hover:shadow-md transition-all">
+
+                    <div class="flex justify-between items-start mb-2">
+
+                        <span class="text-[8px] font-black px-2 py-0.5 rounded bg-slate-900 text-white">${c.rarity}</span>
+
+                        <span class="text-[8px] text-slate-400 font-mono">${c.id}</span>
+
+                    </div>
+
+                    <p class="text-[10px] font-black truncate">${c.name}</p>
+
+                    <p class="text-[8px] text-primary font-bold uppercase">${c.title}</p>
+
+                </div>
+
+            `).join('');
+
         }
+
+
+
+        function shareResultAPI() {
+
+            if(!currentShareData) return;
+
+            const encoded = btoa(unescape(encodeURIComponent(JSON.stringify(currentShareData))));
+
+            const url = window.location.origin + window.location.pathname + "?r=" + encoded;
+
+            const text = `Gue dapet kartu [${currentShareData.id}] di TCG Gacha IMPHNEN! Cek kasta lu di mari:`;
+
+
+
+            if (navigator.share) {
+
+                navigator.share({ title: 'Gacha Kasta IMPHNEN', text: text, url: url });
+
+            } else {
+
+                navigator.clipboard.writeText(text + " " + url);
+
+                alert("Link Berhasil Disalin!");
+
+            }
+
+        }
+
     </script>
+
 </body>
+
 </html>
