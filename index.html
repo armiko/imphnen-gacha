@@ -1056,13 +1056,26 @@
 
             } else {
 
-                if (rand <= 2) { resultItem = gachaData.filter(x => x.rarity === "UR")[Math.floor(Math.random()*3)]; commonStreak = 0; }
-
-                else if (rand <= 10) { resultItem = gachaData.filter(x => x.rarity === "SR")[Math.floor(Math.random()*3)]; commonStreak = 0; }
-
-                else if (rand <= 40) { resultItem = gachaData.filter(x => x.rarity === "R")[Math.floor(Math.random()*3)]; commonStreak = 0; }
-
-                else { resultItem = gachaData.filter(x => x.rarity === "C")[Math.floor(Math.random()*3)]; commonStreak++; }
+                if (rand <= 2) { 
+                    const urPool = gachaData.filter(x => x.rarity === "UR");
+                    resultItem = urPool[Math.floor(Math.random() * urPool.length)]; 
+                    commonStreak = 0; 
+                }
+                else if (rand <= 10) { 
+                    const srPool = gachaData.filter(x => x.rarity === "SR");
+                    resultItem = srPool[Math.floor(Math.random() * srPool.length)]; 
+                    commonStreak = 0; 
+                }
+                else if (rand <= 40) { 
+                    const rPool = gachaData.filter(x => x.rarity === "R");
+                    resultItem = rPool[Math.floor(Math.random() * rPool.length)]; 
+                    commonStreak = 0; 
+                }
+                else { 
+                    const cPool = gachaData.filter(x => x.rarity === "C");
+                    resultItem = cPool[Math.floor(Math.random() * cPool.length)]; 
+                    commonStreak++; 
+                }
 
             }
 
