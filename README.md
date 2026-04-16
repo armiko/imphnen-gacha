@@ -45,9 +45,7 @@ Project ini dibangun dengan konsep simpel tapi nagih:
 - Ada sistem rarity → makin langka makin flex  
 - Bisa share hasil → ajak temen adu hoki  
 - Ada pity system → anti apes berkepanjangan  
-- UI animatif → feel kayak game beneran  
-
-Singkatnya: **simple tapi addictive.**
+- UI animatif → feel kayak game beneran, lengkap sama *shimmer effect* Singkatnya: **simple tapi addictive.**
 
 ---
 
@@ -62,21 +60,25 @@ Singkatnya: **simple tapi addictive.**
 - 🎯 **Pity System**
   - 10x apes = auto SR
 
-- 🃏 **3D Card Flip Animation**
-- ✨ **Visual Effects (shine + confetti)**
-- 📦 **Collection System (localStorage)**
-- 🔗 **Shareable Result (encoded link)**
-- 📱 **Responsive Design (mobile & desktop)**
+- 📖 **Pokedex System (Baru!)**
+  - Simpan dan lihat ulang histori gacha lu lewat pop-up modal
+  - Langsung share hasil kartu lama lu dari Pokedex
+
+- 🃏 **3D Card Flip & Shimmering Animation**
+- ✨ **Visual Effects (Epic Aura + Flashbang + Confetti)**
+- 🔗 **Shareable Result (Encoded link)**
+- 📱 **Responsive Design (Mobile & Desktop)**
 
 ---
 
 ## 🛠️ Tech Stack
 
-Project ini dibuat dengan pendekatan simple & cepat:
+Project ini dibuat dengan pendekatan modular, rapi, & cepat:
 
 - HTML5  
+- CSS3 (Custom Animations)
 - TailwindCSS (CDN)  
-- Vanilla JavaScript  
+- Vanilla JavaScript (Data & Logic Terpisah)  
 - Lucide Icons  
 - Canvas Confetti  
 
@@ -88,94 +90,12 @@ Langsung jalan.
 
 ## 📦 Cara Menjalankan
 
+Karena sekarang udah *modular*, struktur filenya jadi gini:
+- `index.html` (Main layout)
+- `style.css` (Animasi 3D & efek visual)
+- `data.js` (Database kartu)
+- `script.js` (Logic gacha & Pokedex)
+
 ```bash
-# cukup buka file
-index.html
-
-# atau pakai live server
-````
-
-Done. Tidak perlu install apa pun.
-
----
-
-## 🎯 Cara Main
-
-1. Masukkan nama lu
-2. Klik **PULL KARTU SEKARANG**
-3. Tunggu animasi gacha
-4. Klik kartu untuk melihat hasil
-5. Share dan pamer hasil lu 🔥
-
----
-
-## 📊 Rate Gacha
-
-| Rarity | Rate |
-| ------ | ---- |
-| UR     | 2%   |
-| SR     | 8%   |
-| R      | 30%  |
-| C      | 60%  |
-
-> Note: Ada pity system, jadi gak bakal sial terus 😏
-
----
-
-## 💾 Sistem Penyimpanan
-
-```js
-localStorage: imphnen_collection
-```
-
-* Menyimpan maksimal 12 kartu terakhir
-* Semua data disimpan di browser (tanpa server)
-* Cepat & ringan
-
----
-
-## 🔗 Share System
-
-Lu bisa share hasil gacha ke orang lain lewat link:
-
-```
-?r=<encoded_data>
-```
-
-Contoh payload:
-
-```json
-{
-  "n": "nama",
-  "id": "card_id",
-  "pull": "random_id"
-}
-```
-
-Fungsinya:
-
-* Orang lain bisa lihat kartu lu
-* Bisa jadi ajang flex atau bahan roasting 😈
-
----
-
-## ⚠️ Disclaimer
-
-* Ini adalah **project fan-made (unofficial)**
-* Dibuat untuk hiburan & eksperimen UI/UX
-* Tidak ada afiliasi resmi dengan pihak mana pun
-* Semua asset gambar dari sumber publik
-
----
-
-## ✨ Credits
-
-Built with chaos & caffeine ☕
-Powered by 👉 [https://ktik.me](https://ktik.me)
-
----
-
-<p align="center">
-  dibuat bukan untuk serius  
-  tapi cukup serius untuk bikin nagih 😏
-</p>
+# Cukup buka pakai Live Server di VS Code
+# atau langsung drag & drop index.html ke browser
