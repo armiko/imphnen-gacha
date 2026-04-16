@@ -15,6 +15,8 @@ function flipCard() {
     document.getElementById('cardInner').classList.toggle('is-flipped');
 }
 
+// ================= GACHA SYSTEM =================
+
 function checkShareLink() {
     const urlParams = new URLSearchParams(window.location.search);
     const shareCode = urlParams.get('r');
@@ -157,13 +159,13 @@ function updateCardUI(playerName, item, pullId) {
     document.getElementById('cardAttack').innerText = item.attack;
     document.getElementById('cardDesc').innerText = item.desc;
     document.getElementById('randomId').innerText = `ID: ${pullId}`;
-    document.getElementById('cardTypeBadge').innerText = `Type: ${item.type}`;
+    document.getElementById('cardTypeBadge').innerText = `TYPE: ${item.type}`;
     document.getElementById('pullCountDisplay').innerText = pullCount;
     document.getElementById('pityDisplay').innerText = `${commonStreak}/10`;
 
     const cardFront = document.getElementById('cardFront');
-    cardFront.className = `card-front border-[8px] sm:border-[10px] flex flex-col p-2 sm:p-3 bg-${item.rarity.toLowerCase()} border-${item.rarity.toLowerCase()} shine-effect`;
-    document.getElementById('cardRarityBadge').innerText = `Rarity: ${item.rarity}`;
+    cardFront.className = `card-front border-[6px] sm:border-[10px] flex flex-col p-1.5 md:p-3 bg-${item.rarity.toLowerCase()} border-${item.rarity.toLowerCase()} shine-effect`;
+    document.getElementById('cardRarityBadge').innerText = `RARITY: ${item.rarity}`;
 
     const img = document.getElementById('cardImage');
     const placeholder = document.getElementById('artPlaceholder');
@@ -182,15 +184,14 @@ function resetButton() {
 }
 
 function saveToCollection(name, item, pullId) {
-    // Menambahkan properti cardId buat lookup ke pokedex
     const entry = { name, rarity: item.rarity, title: item.title, id: pullId, cardId: item.id, date: new Date().toLocaleDateString() };
     myCollection.unshift(entry);
-    // Tambah limit pokedex dari 12 ke 50 biar bisa nabung banyak
     if(myCollection.length > 50) myCollection.pop();
     localStorage.setItem('imphnen_collection', JSON.stringify(myCollection));
 }
 
-// ================= LOGIC POKEDEX =================
+// ================= POKEDEX & SHARE SYSTEM =================
+
 function openPokedex() {
     renderPokedex();
     document.getElementById('pokedexModal').classList.remove('hidden');
@@ -208,24 +209,28 @@ function renderPokedex() {
     }
 
     grid.innerHTML = myCollection.map((c, index) => {
-        // Fallback untuk history lama (yang belum punya cardId di localStorage)
         const cardData = gachaData.find(x => x.id === c.cardId || x.title === c.title);
         const imgUrl = cardData ? cardData.image : 'https://imphnen.dev/logo.webp';
 
         return `
-        <div onclick="viewPokedexItem(${index})" class="bg-white rounded-xl border border-slate-200 shadow-sm hover:shadow-md hover:-translate-y-1 transition-all cursor-pointer overflow-hidden flex flex-col relative group">
-            <div class="h-28 bg-slate-800 relative overflow-hidden">
+        <div class="bg-white rounded-xl border border-slate-200 shadow-sm hover:shadow-md hover:-translate-y-1 transition-all overflow-hidden flex flex-col relative group">
+            <div class="h-28 bg-slate-800 relative overflow-hidden cursor-pointer" onclick="viewPokedexItem(${index})">
                 <img src="${imgUrl}" class="w-full h-full object-cover opacity-80 group-hover:opacity-100 transition-opacity">
                 <div class="absolute top-1 right-1 bg-slate-900/80 px-1.5 py-0.5 rounded text-[8px] font-black text-white border border-white/20">${c.rarity}</div>
             </div>
             <div class="p-2 flex-1 flex flex-col justify-between">
-                <div>
+                <div class="cursor-pointer" onclick="viewPokedexItem(${index})">
                     <p class="text-[9px] text-slate-400 font-mono mb-0.5">${c.id}</p>
                     <p class="text-[11px] font-black leading-tight text-slate-800 line-clamp-1">${c.title}</p>
                     <p class="text-[9px] text-primary font-bold truncate mt-0.5">${c.name}</p>
                 </div>
-                <div class="mt-2 pt-2 border-t border-slate-100 text-[9px] text-slate-500 text-center font-bold flex items-center justify-center gap-1 group-hover:text-primary transition-colors">
-                    <i data-lucide="eye" class="w-3.5 h-3.5"></i> LIHAT
+                <div class="mt-2 flex gap-1">
+                    <button onclick="viewPokedexItem(${index})" class="flex-1 py-1 bg-slate-100 hover:bg-slate-200 rounded text-[8px] font-bold text-slate-600 flex items-center justify-center gap-1 transition-colors">
+                        <i data-lucide="eye" class="w-3 h-3"></i> LIHAT
+                    </button>
+                    <button onclick="createDuelLink(${index}, event)" class="flex-1 py-1 bg-red-50 hover:bg-red-100 border border-red-200 rounded text-[8px] font-bold text-red-600 flex items-center justify-center gap-1 transition-colors">
+                        <i data-lucide="swords" class="w-3 h-3"></i> TANTANG
+                    </button>
                 </div>
             </div>
         </div>
@@ -237,36 +242,49 @@ function renderPokedex() {
 function viewPokedexItem(index) {
     const c = myCollection[index];
     const item = gachaData.find(x => x.id === c.cardId || x.title === c.title);
-    if(!item) {
-        alert('Data kartu gagal dimuat.');
-        return;
-    }
+    if(!item) { alert('Data kartu gagal dimuat.'); return; }
 
-    // 1. Tutup modal Pokedex
     closePokedex();
-
-    // 2. Tampilkan UI Kartu ke Main Display
     updateCardUI(c.name, item, c.id);
-    
-    // 3. Posisikan agar kartu tampak depan
     document.getElementById('cardInner').classList.remove('is-flipped');
-    
-    // 4. Munculkan container share dan hint flip
     document.getElementById('shareActionContainer').classList.remove('hidden');
     document.getElementById('flipHint').classList.remove('hidden');
-
-    // 5. Scroll otomatis ke arah kartu
     document.getElementById('cardWrapperMain').scrollIntoView({ behavior: 'smooth', block: 'center' });
+}
+
+function createDuelLink(index, event) {
+    event.stopPropagation(); 
+    const c = myCollection[index];
+    
+    const validCard = gachaData.find(x => x.id === c.cardId || x.title === c.title);
+    if (!validCard) return alert("Kartu ini error, gak bisa diajak duel.");
+
+    // Tambahin timestamp biar link unik trus dan gak hangus biarpun kartunya sama
+    const payload = { n: c.name, id: validCard.id, pull: c.id, ts: Date.now() };
+    const encoded = btoa(unescape(encodeURIComponent(JSON.stringify(payload))));
+    
+    // Bikin URL share
+    let basePath = window.location.href.split('?')[0].replace('index.html', '');
+    const url = basePath + "duel.html?c=" + encoded;
+    
+    const text = `Gue tantang lu adu kartu di Arena IMPHNEN! Berani lawan gue? Klik link ini:`;
+
+    if (navigator.share) {
+        navigator.share({ title: 'Arena Duel IMPHNEN', text: text, url: url });
+    } else {
+        navigator.clipboard.writeText(text + "\n" + url);
+        alert("Link Arena Duel berhasil disalin! Kirim ke musuh lu sekarang!");
+    }
 }
 
 function shareResultAPI() {
     if(!currentShareData) return;
     const encoded = btoa(unescape(encodeURIComponent(JSON.stringify(currentShareData))));
-    const url = window.location.origin + window.location.pathname + "?r=" + encoded;
-    const text = `Gue dapet kartu [${currentShareData.id}] di TCG Gacha IMPHNEN! Cek kasta lu di mari:`;
+    const url = window.location.href.split('?')[0] + "?r=" + encoded;
+    const text = `Gue dapet kartu [${currentShareData.id}] di TCG Gacha IMPHNEN! Cek hoki lu di mari:`;
 
     if (navigator.share) {
-        navigator.share({ title: 'Gacha Kasta IMPHNEN', text: text, url: url });
+        navigator.share({ title: 'Gacha & Arena Duel IMPHNEN', text: text, url: url });
     } else {
         navigator.clipboard.writeText(text + " " + url);
         alert("Link Berhasil Disalin!");
