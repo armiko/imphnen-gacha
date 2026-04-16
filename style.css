@@ -1,0 +1,147 @@
+body { overflow-x: hidden; }
+
+/* Seamless Marquee */
+.marquee-content {
+    display: flex;
+    width: max-content;
+    animation: scrolling 25s linear infinite;
+}
+@keyframes scrolling {
+    0% { transform: translateX(0); }
+    100% { transform: translateX(-50%); }
+}
+
+/* 3D Flip Card Mechanics */
+.card-wrapper { 
+    perspective: 1500px; 
+    aspect-ratio: 63 / 88;
+    width: 100%;
+    position: relative;
+    z-index: 20;
+}
+.card-inner {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    transition: transform 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    transform-style: preserve-3d;
+    cursor: pointer;
+}
+.card-inner.is-flipped {
+    transform: rotateY(180deg);
+}
+.card-front, .card-back {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    backface-visibility: hidden;
+    -webkit-backface-visibility: hidden;
+    border-radius: 1.5rem;
+    box-shadow: 0 25px 50px -12px rgba(0,0,0,0.5);
+}
+.card-front {
+    transform: rotateY(0deg);
+    -webkit-transform: rotateY(0deg);
+    z-index: 2;
+}
+.card-back {
+    transform: rotateY(180deg);
+    -webkit-transform: rotateY(180deg);
+    background: linear-gradient(135deg, #0f172a, #1e293b);
+    border: 8px solid #334155;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    z-index: 1;
+}
+@media (min-width: 640px) {
+    .card-back { border-width: 10px; }
+}
+
+/* Holo Foil Overlay */
+.holo-foil {
+    position: absolute; inset: 0; z-index: 40; pointer-events: none; opacity: 0;
+    background: linear-gradient(115deg, transparent 20%, rgba(255, 255, 255, 0.8) 40%, rgba(255, 255, 255, 0.2) 45%, transparent 60%);
+    background-size: 200% 200%; background-position: -100% 0; mix-blend-mode: color-dodge;
+    border-radius: inherit;
+}
+.shine-effect .holo-foil { animation: shimmer 2.5s ease-in-out infinite; opacity: 1; }
+
+/* Tambahan Keyframes Animasi Shimmer (Siluet Putih Berjalan) */
+@keyframes shimmer {
+    0% { background-position: 200% 0; }
+    100% { background-position: -200% 0; }
+}
+
+/* UPGRADED GACHA SHAKING EXTREME */
+@keyframes pullShakeExtreme {
+    0%, 100% { transform: translate(0,0) rotate(0deg) scale(1.05); }
+    20% { transform: translate(-4px, 4px) rotate(-1deg) scale(1.05); }
+    40% { transform: translate(4px, -4px) rotate(1deg) scale(1.05); }
+    60% { transform: translate(-4px, -4px) rotate(-1deg) scale(1.05); }
+    80% { transform: translate(4px, 4px) rotate(1deg) scale(1.05); }
+}
+.anim-rolling { 
+    animation: pullShakeExtreme 0.1s infinite !important; 
+    filter: brightness(1.2); 
+    z-index: 50;
+}
+
+/* EPIC AURA GLOW BEHIND CARD */
+.epic-aura {
+    position: absolute;
+    top: 50%; left: 50%;
+    transform: translate(-50%, -50%);
+    width: 140%; height: 140%;
+    border-radius: 50%;
+    z-index: 10;
+    opacity: 0;
+    transition: all 0.5s ease;
+    pointer-events: none;
+    filter: blur(40px);
+}
+.aura-ur { background: radial-gradient(circle, rgba(250,204,21,0.8) 0%, transparent 70%); opacity: 1; animation: pulseAura 2s infinite; }
+.aura-sr { background: radial-gradient(circle, rgba(168,85,247,0.8) 0%, transparent 70%); opacity: 1; animation: pulseAura 2s infinite; }
+@keyframes pulseAura {
+    0%, 100% { transform: translate(-50%, -50%) scale(1); opacity: 0.8; }
+    50% { transform: translate(-50%, -50%) scale(1.2); opacity: 1; }
+}
+
+/* FLASHBANG EFFECT */
+#flashBang {
+    position: fixed;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: white;
+    z-index: 9999;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.2s ease-out;
+}
+.is-flashing { opacity: 1 !important; }
+
+/* TCG Rarity Theme Colors */
+.bg-ur { background: linear-gradient(135deg, #FFDF00, #D4AF37, #B8860B); }
+.bg-sr { background: linear-gradient(135deg, #FF00FF, #8A2BE2, #4B0082); }
+.bg-r { background: linear-gradient(135deg, #00FFFF, #1E90FF, #00008B); }
+.bg-c { background: linear-gradient(135deg, #E2E8F0, #94A3B8, #475569); }
+.bg-mythic { background: linear-gradient(135deg, #ff0000, #800000, #000000); }
+.bg-empty { background: linear-gradient(135deg, #1e293b, #0f172a); }
+
+.border-ur { border-color: #FFEA00; }
+.border-sr { border-color: #DDA0DD; }
+.border-r { border-color: #87CEFA; }
+.border-c { border-color: #F8FAFC; }
+.border-mythic { border-color: #ff0000; }
+
+@keyframes popUp {
+    0% { opacity: 0; transform: translateY(20px) scale(0.9); }
+    100% { opacity: 1; transform: translateY(0) scale(1); }
+}
+.anim-pop-up { animation: popUp 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards; }
+
+.bg-grid-pattern {
+    background-size: 30px 30px;
+    background-image: linear-gradient(to right, rgba(59, 130, 246, 0.08) 1px, transparent 1px),
+                      linear-gradient(to bottom, rgba(59, 130, 246, 0.08) 1px, transparent 1px);
+}
