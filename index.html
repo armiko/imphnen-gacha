@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-    <title>IMPHNEN - Gacha& Arena Duel</title>
+    <title>IMPHNEN - Gacha & Arena Duel</title>
     <meta name="title" content="IMPHNEN - Gacha & Arena Duel" />
     <meta name="description" content="Adu hoki lu di Gacha Nasib Warga IMPHNEN (Unofficial). Koleksi kartu kasta tertinggi!" />
     <meta name="author" content="ktik.me" />
@@ -216,9 +216,14 @@
                     </p>
 
                     <div id="shareActionContainer" class="hidden w-full max-w-[280px] sm:max-w-[320px] md:max-w-[340px] lg:max-w-[360px] mt-4 z-30">
-                        <button onclick="shareResultAPI()" class="w-full bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white text-sm sm:text-base font-black py-3 sm:py-4 px-4 rounded-2xl flex items-center justify-center gap-3 shadow-[0_10px_20px_rgba(59,130,246,0.3)] transition-all active:scale-95 border border-blue-400">
-                            <i data-lucide="share-2" class="w-5 h-5"></i> Pamerkan Hasil Gacha!
-                        </button>
+                        <div class="flex gap-2">
+                            <button onclick="shareResultAPI()" class="flex-1 bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs sm:text-sm font-bold py-3 sm:py-4 px-2 rounded-xl flex items-center justify-center gap-2 shadow-sm transition-all border border-slate-300">
+                                <i data-lucide="eye" class="w-4 h-4"></i> Share
+                            </button>
+                            <button onclick="createDuelLinkFromGacha()" class="flex-1 bg-red-50 hover:bg-red-100 text-red-600 text-xs sm:text-sm font-bold py-3 sm:py-4 px-2 rounded-xl flex items-center justify-center gap-2 shadow-sm transition-all border border-red-200">
+                                <i data-lucide="swords" class="w-4 h-4"></i> Tantang Duel
+                            </button>
+                        </div>
                     </div>
                 </div>
             </div>

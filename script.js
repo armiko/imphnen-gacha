@@ -38,7 +38,7 @@ function checkShareLink() {
             let item = gachaData.find(x => x.id === decoded.id) || gachaData[gachaData.length-1];
             updateCardUI(decoded.n, item, decoded.pull);
             document.getElementById('cardInner').classList.remove('is-flipped');
-            document.getElementById('shareActionContainer').classList.remove('hidden');
+            
             document.getElementById('flipHint').classList.remove('hidden');
         } catch (error) { console.log("Invalid share link."); }
     }
@@ -288,5 +288,38 @@ function shareResultAPI() {
     } else {
         navigator.clipboard.writeText(text + " " + url);
         alert("Link Berhasil Disalin!");
+    }
+}
+
+// === TAMBAHIN FUNGSI INI DI PALING BAWAH SCRIPT.JS ===
+
+function createDuelLinkFromGacha() {
+    if (!currentShareData) return alert("Belum ada kartu yang digacha!");
+    
+    // Cari data kartu utuh dari gachaData berdasarkan ID Share
+    const validCard = gachaData.find(x => x.id === currentShareData.id);
+    if (!validCard) return alert("Kartu ini error, gak bisa diajak duel.");
+
+    // Bikin Payload buat nge-link ke Arena (Sama persis kayak logika di Pokedex)
+    const payload = { 
+        n: currentShareData.n, 
+        id: validCard.id, 
+        pull: currentShareData.pull, 
+        ts: Date.now() 
+    };
+    const encoded = btoa(unescape(encodeURIComponent(JSON.stringify(payload))));
+    
+    // Bikin URL share
+    let basePath = window.location.href.split('?')[0].replace('index.html', '');
+    const url = basePath + "duel.html?c=" + encoded;
+    
+    const text = `Gue tantang lu adu kasta di Arena IMPHNEN! Berani lawan gue? Klik link ini:`;
+
+    // Trigger fitur Share HP
+    if (navigator.share) {
+        navigator.share({ title: 'Arena Duel IMPHNEN', text: text, url: url });
+    } else {
+        navigator.clipboard.writeText(text + "\n" + url);
+        alert("Link Arena Duel berhasil disalin! Kirim ke musuh lu sekarang!");
     }
 }
